@@ -1,6 +1,6 @@
 import torch
 from torch import Tensor
-import torch.nn.functional as F
+# import torch.nn.functional as F
 import numpy as np
 import os
 import cv2
@@ -16,7 +16,7 @@ class cnnf(nn.Module):
     def __init__(self):
         super(cnnf, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU()
@@ -94,13 +94,13 @@ class cnny(nn.Module):
     def __init__(self):
         super(cnny, self).__init__()
         self.layer = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(32, 1, kernel_size=3, stride=1, padding=1)
+            nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1)
         )
 
     def forward(self, x):
@@ -115,7 +115,7 @@ class cnnu(nn.Module):
     def __init__(self):
         super(cnnu, self).__init__()
         self.layer = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
             nn.ReLU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
@@ -128,12 +128,6 @@ class cnnu(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True)
         )
 
-        # self.fc = nn.Sequential(
-        #     nn.Linear(2*2*32, 1*1*32),
-        #     nn.Linear(1*1*32, 1)
-
-        # )
-        
         self.fc = nn.Sequential(
             nn.Linear(3*3*32, 1*1*32),
             nn.Linear(1*1*32, 1)
