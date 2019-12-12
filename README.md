@@ -91,5 +91,5 @@ Same parameters as DeepGLR/
 The above command will resize the ```INPUT_IMAGE``` to ```324x324```, then denoise it using a trained DeepGLR ```model/deepglr.pretrained``` and save the result at ```OUTPUT_IMAGE```
 
 # Acknowledgments
-All of the works are done on Google Colaboratory. Thanks Google for the free GPUs. 
+Most of these works are done on Google Colaboratory. Thanks Google for the free GPUs. 
 
