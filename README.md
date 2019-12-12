@@ -3,7 +3,7 @@
 # pytorch-deepglr
 A pytorch implementation of Deep Graph Laplacian Regularization for image denoising. Original work: [Zeng et al.](http://openaccess.thecvf.com/content_CVPRW_2019/papers/NTIRE/Zeng_Deep_Graph_Laplacian_Regularization_for_Robust_Denoising_of_Real_Images_CVPRW_2019_paper.pdf)
 <p align="center">
-  <img width="550" height="300" src="img/sample.JPG">
+  <img width="817" height="300" src="img/sample2.JPG">
 </p>
 
 # Installation
