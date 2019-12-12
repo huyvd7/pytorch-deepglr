@@ -3,7 +3,7 @@
 # pytorch-deepglr
 A pytorch implementation of Deep Graph Laplacian Regularization for image denoising. Original work: [Zeng et al.](http://openaccess.thecvf.com/content_CVPRW_2019/papers/NTIRE/Zeng_Deep_Graph_Laplacian_Regularization_for_Robust_Denoising_of_Real_Images_CVPRW_2019_paper.pdf)
 <p align="center">
-  <img width="550" height="300" src="https://github.com/huyvd7/pytorch-deepglr/blob/master/sample.jpg">
+  <img width="550" height="300" src="./sample.jpg">
 </p>
 
 # Installation
@@ -35,7 +35,7 @@ The above command runs much faster but because it's using a single GLR layer, it
       
 ### NOTE
 <p align="center">
-  <img width="1000" height="105" src="https://github.com/huyvd7/pytorch-deepglr/blob/master/thumbnail.png">
+  <img width="1000" height="105" src="./thumbnail.png">
 </p>
 
 The provided sample dataset in this directory is a resized version of RENOIR dataset (resized to 720x720). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html).
