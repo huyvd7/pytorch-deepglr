@@ -27,7 +27,7 @@ def main(args):
     else:
         width = 324
     if width <= 36:
-        print("Too small image, can't denoised. Minimum width is 36")
+        print("Too small image, can't denoised. Minimum width is 72")
         return 11
 
     if args.learning_rate:
