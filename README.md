@@ -52,9 +52,9 @@ The above command runs much faster but it has poorer results because it's using 
   <img width="1000" height="105" src="img/thumbnail.PNG">
 </p>
 
-The provided sample dataset in this directory is a resized version of RENOIR dataset (resized to 720x720). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html).
+The provided sample dataset in this directory is a resized version of RENOIR dataset (720x720 instead of 3000x3000). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html).
 
-Because this is a resize version, **the evaluation results are different from what were reported (much higher!!)**. To reproduce the same results as written in the report, please replace the sample dataset in this repository with the original one. For your convinient, you can use this [Google Drive mirror](https://drive.google.com/file/d/1gK611CnIC5PmUDLgCp8jVrEygn6VOytf/view?usp=sharing). This mirror will be deleted at the end of Dec 2019.
+Since this is a resized dataset, **the evaluation results are different from what were reported (much higher!!)**. To reproduce the same results as written in the report, please replace the sample dataset in this repository with the original one. For your convinient, you can get the original from this [Google Drive mirror](https://drive.google.com/file/d/1gK611CnIC5PmUDLgCp8jVrEygn6VOytf/view?usp=sharing). This mirror will be deleted at the end of Dec 2019.
 
 ## Train a model
 ### Train a DeepGLR
