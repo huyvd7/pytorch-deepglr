@@ -25,10 +25,10 @@ def main(args):
     if args.width:
         width = int(args.width) // 36 * 36
     else:
-        width = 36
-    if width < 36:
-        print("Too small image, can't denoised. Minimum width is 36")
-        return 1
+        width = 324
+    if width <= 36:
+        print("Too small image, can't denoised. Minimum width is 72")
+        return 11
 
     if args.learning_rate:
         lr = float(args.learning_rate)
@@ -46,11 +46,13 @@ def main(args):
     if args.name:
         PATH = os.path.join(DST, args.name)
     else:
-        PATH = os.path.join(DST, "GLR.pkl")
+        PATH = os.path.join(DST, "DGLR.pkl")
 
     dataset = RENOIR_Dataset(
         img_dir=args.train_path,
-        transform=transforms.Compose([standardize(scale=None, w=width, normalize=True), ToTensor()]),
+        transform=transforms.Compose(
+            [standardize(scale=None, w=width, normalize=True), ToTensor()]
+        ),
     )
     patch_splitting(dataset=dataset, output_dst=DST, patch_size=36)
 
@@ -105,7 +107,9 @@ def main(args):
             print("save @ epoch ", epoch + 1)
             torch.save(glr.state_dict(), PATH)
 
+    torch.save(glr.state_dict(), PATH)
     print("Total running time: {0:.3f}".format(time.time() - tstart))
+    cleaning(DST)
 
 
 if __name__ == "__main__":
@@ -117,7 +121,7 @@ if __name__ == "__main__":
         help="Path to the trained DeepGLR. Will train from scratch if not specified",
     )
     parser.add_argument(
-        "-n", "--name", help="Name of model. Default is GLR.pkl",
+        "-n", "--name", help="Name of model. Default is DGLR.pkl",
     )
     parser.add_argument(
         "-d",
@@ -127,7 +131,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-w",
         "--width",
-        help="Resize image to a square image with given width before patch splitting. Default is 324",
+        help="Resize image to a square image with given width before patch splitting. Default is 324. Minimum is 72",
     )
     parser.add_argument("-e", "--epoch", help="Total epochs")
     parser.add_argument(

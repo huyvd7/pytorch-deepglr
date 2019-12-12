@@ -25,10 +25,10 @@ def main(args):
     if args.width:
         width = int(args.width) // 36 * 36
     else:
-        width = 36
-    if width < 36:
-        print("Too small image, can't denoised. Minimum width is 36")
-        return 1
+        width = 324
+    if width <= 36:
+        print("Too small image, can't denoised. Minimum width is 72")
+        return 11
 
     if args.learning_rate:
         lr = float(args.learning_rate)
@@ -107,7 +107,9 @@ def main(args):
             print("save @ epoch ", epoch + 1)
             torch.save(glr.state_dict(), PATH)
 
+    torch.save(glr.state_dict(), PATH)
     print("Total running time: {0:.3f}".format(time.time() - tstart))
+    cleaning(DST)
 
 
 if __name__ == "__main__":
@@ -129,7 +131,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-w",
         "--width",
-        help="Resize image to a square image with given width before patch splitting. Default is 324",
+        help="Resize image to a square image with given width before patch splitting. Default is 324. Minimum is 72",
     )
     parser.add_argument("-e", "--epoch", help="Total epochs")
     parser.add_argument(
