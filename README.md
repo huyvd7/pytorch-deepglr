@@ -3,7 +3,7 @@
 # pytorch-deepglr
 A pytorch implementation of Deep Graph Laplacian Regularization for image denoising. Original work: [Zeng et al.](http://openaccess.thecvf.com/content_CVPRW_2019/papers/NTIRE/Zeng_Deep_Graph_Laplacian_Regularization_for_Robust_Denoising_of_Real_Images_CVPRW_2019_paper.pdf)
 <p align="center">
-  <img width="817" height="300" src="img/sample2.JPG">
+  <img width="817" height="300" src="img/sample2.JPG" class="img-responsive">
 </p>
 
 # Installation
@@ -54,7 +54,7 @@ The above command runs much faster but it has poorer results because it's using 
 
 The provided sample dataset in this directory is a resized version of RENOIR dataset (720x720 instead of 3000x3000). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html).
 
-Since this is a resized dataset, **the evaluation results are different from what were reported (much higher!!)**. For this sample dataset, the results are listed below:
+Since this is a resized dataset, **the evaluation results are different from what were reported (MUCH HIGHER!!!)**. For this sample dataset, the results are listed below:
 
 | Metric        | Train           | Test  |
 | :-------------: |:-------------:| :-----:|
@@ -78,7 +78,7 @@ The above command will train a new DeepGLR with these hyperparameters:
     Batch size: 100 (-b)
     Learning rate: 2e-4 (-l)
 
-**Note:** training a DeepGLR from scratch would require a lot of hyperparameter tuning depends on the dataset and also randomization. It is easier to train 4 separate single GLR first, then stack them manually (this is a future feature, feel free to make a pull request!)
+**Note:** training a DeepGLR from scratch would require a lot of hyperparameter tuning depends on the dataset and also randomization. It is easier to train 4 separate single GLR first, then stack them manually (this is a future work, feel free to make a pull request!)
 
 We can also continue training an existing DeepGLR by using ```-m PATH_TO_EXIST_MODEL```. Thus, to train from ```model/deepglr.pretrained```, we can use:
 
