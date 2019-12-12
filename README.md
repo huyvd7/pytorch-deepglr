@@ -8,6 +8,21 @@ A pytorch implementation of Deep Graph Laplacian Regularization for image denois
       ``` pip install -r requirements.txt ```
 
 # Basic usage
-## Evaluate a DeepGLR model
+## Evaluate a trained model
+We provide two sample scripts to evaluate the trained models. For both DeepGLR and GLR. The GLR is a smaller network and can be tested quickly
 
+### Evaluate DeepGLR
+Using validate_DGLR.py 
+
+      ```python validate_DGLR.py dataset/test/ -m model/deepglr.pretrained -w 324```
+
+### Evaluate GLR
+Using validate_GLR.py: 
+
+      ```python validate_DGLR.py dataset/test/ -m model/glr.pretrained -w 324```
+
+### Parameters
+These two scripts have similar CLI parameters:
+
+      
 ## Train DeepGLR from scratch
