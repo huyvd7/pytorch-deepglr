@@ -50,13 +50,13 @@ Because this is a resize version, **the evaluation results are different from wh
     
 The above command will train a new DeepGLR with these hyperparameters:
 
-    Dataset ```dataset/train/```
-    Output model name ```MODEL_NAME``` (-n)
-    Output directory ```./``` (-d)
-    Resize the given dataset to ```324x324``` (-w)
-    Epoch ```200``` (-e)
-    Batch size ```100```(-b)
-    Learning rate ```2e-4``` (-l)
+    Dataset: dataset/train/
+    Output model name: MODEL_NAME (-n)
+    Output directory: ./ (-d)
+    Resize the given dataset to: 324x324 (-w)
+    Epoch: 200 (-e)
+    Batch size: 100 (-b)
+    Learning rate: 2e-4 (-l)
 
 We can also continue train an existing DeepGLR by using ```-m PATH_TO_EXIST_MODEL```. Thus, to train from ```model/deepglr.pretrained```, we can use:
 
