@@ -71,6 +71,8 @@ The above command will train a new DeepGLR with these hyperparameters:
     Batch size: 100 (-b)
     Learning rate: 2e-4 (-l)
 
+**Note:** training a DeepGLR from scratch would require a lot of hyperparameter tuning depends on the dataset and also randomization. It is easier to train 4 separate single GLR first, then stack them manually (which will be future feature, feel free to make a pull request!)
+
 We can also continue train an existing DeepGLR by using ```-m PATH_TO_EXIST_MODEL```. Thus, to train from ```model/deepglr.pretrained```, we can use:
 
     python train_DGLR.py dataset/train/ -m model/deepglr.pretrained -n MODEL_NAME -d ./ -w 324 -e 200 -b 100 -l 2e-4 
@@ -79,7 +81,8 @@ We can also continue train an existing DeepGLR by using ```-m PATH_TO_EXIST_MODE
 
     python train_GLR.py dataset/train/ -n MODEL_NAME -d ./ -w 324 -e 200 -b 100 -l 2e-4 
     
-Same parameters as DeepGLR
+Same parameters as DeepGLR/
+
 
 ## Remove noise of a single image using a trained DeepGLR
 
