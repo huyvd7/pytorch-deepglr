@@ -8,16 +8,27 @@ A pytorch implementation of Deep Graph Laplacian Regularization for image denois
 
 # Installation
 1. Clone this [repository](https://github.com/huyvd7/pytorch-deepglr)
-2. If you already had the same Pytorch version (pytorch==1.2.0, torchvision==0.4.0), you can remove these lines in requirements.txt: ```pytorch==1.2.0 and torchvision==0.4.0```.
+2. Package requirements: requirements.txt      
+  ```
+  torch==1.2.0
+  torchvision==0.4.0
+  scipy==1.3.1
+  matplotlib==3.1.2
+  numpy==1.17.2
+  scikit_image==0.16.2
+  opencv-python
+  ```
+  If you already had the same Pytorch version (pytorch==1.2.0, torchvision==0.4.0), remove these lines in requirements.txt: ```pytorch==1.2.0 and torchvision==0.4.0```.
+  
 3. Install required packages listed in requirements.txt (with Python 3.7)
 
-      ``` pip install -r requirements.txt ```     
+  ``` pip install -r requirements.txt ```     
       
 4. If you have issues when installing PyTorch. Please follow their official installation guide [PyTorch](https://pytorch.org/get-started/previous-versions/). Please looking for this version ```pytorch==1.2.0 and torchvision==0.4.0```
 
 # Basic usage
 ## Evaluate a trained model
-We provide two sample scripts to evaluate the trained models. For both DeepGLR and GLR. The GLR is a smaller network and can be tested quickly
+Two sample scripts to evaluate the trained models are provided. For both DeepGLR and GLR. The GLR is a smaller network and can be tested quickly
 
 ### Evaluate DeepGLR
 
