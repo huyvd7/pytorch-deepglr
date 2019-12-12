@@ -4,8 +4,8 @@ import numpy as np
 import os
 import cv2
 import torch.nn as nn
-from torch.utils.data import Dataset
-
+from torch.utils.data import Dataset, DataLoader
+from torchvision.utils import save_image
 
 cuda = True if torch.cuda.is_available() else False
 if cuda:
@@ -200,7 +200,7 @@ class RENOIR_Dataset(Dataset):
 class standardize(object):
     """Convert opencv BGR to RGB order. Scale the image with a ratio"""
 
-    def __init__(self, scale=None, w=None):
+    def __init__(self, scale=None, w=None, normalize=None):
         """
         Args:
         scale (float): resize height and width of samples to scale*width and scale*height
@@ -208,6 +208,7 @@ class standardize(object):
         """
         self.scale = scale
         self.w = w
+        self.normalize = normalize
 
     def __call__(self, sample):
         nimg, rimg = sample["nimg"], sample["rimg"]
@@ -218,8 +219,14 @@ class standardize(object):
             if self.w:
                 nimg = cv2.resize(nimg, (self.w, self.w))
                 rimg = cv2.resize(rimg, (self.w, self.w))
+        if self.normalize:
+            nimg = cv2.resize(nimg, (0, 0), fx=1, fy=1)
+            rimg = cv2.resize(rimg, (0, 0), fx=1, fy=1)
         nimg = cv2.cvtColor(nimg, cv2.COLOR_BGR2RGB)
         rimg = cv2.cvtColor(rimg, cv2.COLOR_BGR2RGB)
+        if self.normalize:
+            nimg = nimg / 255
+            rimg = rimg / 255
         return {"nimg": nimg, "rimg": rimg}
 
 
@@ -433,3 +440,76 @@ def qpsolve(L, u, y, Im):
     xhat = torch.inverse(Im + u[:, None] * L)
     xhat = torch.bmm(xhat, y)
     return xhat
+
+
+def patch_splitting(dataset, output_dst, patch_size=36):
+    import shutil
+
+    output_dst_temp = os.path.join(output_dst, "patches")
+    output_dst_noisy = os.path.join(output_dst_temp, "noisy")
+    output_dst_ref = os.path.join(output_dst_temp, "ref")
+    try:
+        if not os.path.exists(output_dst_temp):
+            os.makedirs(output_dst_temp)
+        else:
+            shutil.rmtree(output_dst_temp)  # Removes all the subdirectories!
+            os.makedirs(output_dst_temp)
+
+        if not os.path.exists(output_dst_noisy):
+            os.makedirs(output_dst_noisy)
+        else:
+            shutil.rmtree(output_dst_noisy)  # Removes all the subdirectories!
+            os.makedirs(output_dst_noisy)
+
+        if not os.path.exists(output_dst_ref):
+            os.makedirs(output_dst_ref)
+        else:
+            shutil.rmtree(output_dst_ref)  # Removes all the subdirectories!
+            os.makedirs(output_dst_ref)
+
+    except Exception:
+        print(
+            "Cannot create temporary directories for saving image patches at ",
+            output_dst,
+        )
+
+    dataloader = DataLoader(dataset, batch_size=1)
+    total = 0
+    for i_batch, s in enumerate(dataloader):
+        nnn = dataset.nimg_name[i_batch]
+        rn = dataset.rimg_name[i_batch]
+        T1 = (
+            s["nimg"]
+            .unfold(2, patch_size, patch_size)
+            .unfold(3, patch_size, patch_size)
+            .reshape(1, 3, -1, patch_size, patch_size)
+            .squeeze()
+        )
+        T2 = (
+            s["rimg"]
+            .unfold(2, patch_size, patch_size)
+            .unfold(3, patch_size, patch_size)
+            .reshape(1, 3, -1, patch_size, patch_size)
+            .squeeze()
+        )
+        print(T1.shape, T2.shape)
+        for i in range(T1.shape[1]):
+            save_image(
+                T1[:, i, :, :], os.path.join(output_dst_noisy, "{0}_{1}".format(i, nnn))
+            )
+            total += 1
+        for i in range(T2.shape[1]):
+            save_image(
+                T2[:, i, :, :], os.path.join(output_dst_ref, "{0}_{1}".format(i, rn))
+            )
+    print("Total image patches: ", total)
+
+
+def cleaning(output_dst):
+    import shutil
+
+    output_dst_temp = os.path.join(output_dst, "patches")
+    try:
+        shutil.rmtree(output_dst_temp)  # Removes all the subdirectories!
+    except Exception:
+        print("Cannot clean the temporary image patches")

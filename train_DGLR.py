@@ -25,10 +25,10 @@ def main(args):
     if args.width:
         width = int(args.width) // 36 * 36
     else:
-        width = 36
-    if width < 36:
+        width = 324
+    if width <= 36:
         print("Too small image, can't denoised. Minimum width is 36")
-        return 1
+        return 11
 
     if args.learning_rate:
         lr = float(args.learning_rate)
