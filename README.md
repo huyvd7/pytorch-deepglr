@@ -58,7 +58,7 @@ The above command runs much faster but it has poorer results because it's using 
 
 The provided sample dataset in this directory is a resized version of RENOIR dataset (720x720 instead of 3000x3000). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html).
 
-Since this is a resized dataset, **the evaluation results are different from what were reported (MUCH HIGHER!!!)**. For this sample dataset, the results are listed below:
+Since this is a resized dataset, **the evaluation results are different from what were reported (MUCH HIGHER!!!)**. For this sample dataset, the evaluation scores are:
 
 | Metric        | Train           | Test  |
 | :-------------: |:-------------:| :-----:|
