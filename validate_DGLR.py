@@ -78,15 +78,17 @@ def main(args):
             new_d.append(_d)
         d = np.array(new_d).transpose(1, 2, 0)
         if args.output:
-            opath = args.output + str(imgidx) + ".png"
+            opath = os.path.join(args.output, str(imgidx) + ".png")
+            opathr = os.path.join(args.output, str(imgidx) + "_ref.png")
         else:
             opath = "./{0}{1}".format(imgidx, ".png")
+            opathr = "./{0}{1}".format(imgidx, "_ref.png")
         plt.imsave(opath, d)
         d = cv2.imread(opath)
         d = cv2.cvtColor(d, cv2.COLOR_BGR2RGB)
         tref = sample["rimg"].squeeze(0)
         tref = tref.detach().numpy().transpose((1, 2, 0))
-
+        plt.imsave(opathr, tref)
         (score, diff) = compare_ssim(tref, d, full=True, multichannel=True)
         _ssims.append(score)
         print("SSIM: ", score)

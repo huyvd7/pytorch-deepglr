@@ -1,4 +1,5 @@
 import time
+import os
 import torch
 import torch.nn as nn
 from deepglr.deepglr import *
@@ -26,13 +27,8 @@ def main(args):
     else:
         width = 36
     if width < 36:
-        print("Too small image, can't denoised")
+        print("Too small image, can't denoised. Minimum width is 36")
         return 1
-
-    dataset = RENOIR_Dataset(
-        img_dir=args.train_path,
-        transform=transforms.Compose([standardize(scale=None, w=width), ToTensor()]),
-    )
 
     if args.learning_rate:
         lr = float(args.learning_rate)
@@ -42,14 +38,32 @@ def main(args):
         total_epoch = int(args.epoch)
     else:
         total_epoch = 200
-    if args.output:
-        PATH = args.output
+    if args.destination:
+        DST = args.destination
     else:
-        PATH = "./glr.pkl"
+        DST = "./"
+
+    if args.name:
+        PATH = os.path.join(DST, args.name)
+    else:
+        PATH = os.path.join(DST, "GLR.pkl")
+
+    dataset = RENOIR_Dataset(
+        img_dir=args.train_path,
+        transform=transforms.Compose(
+            [standardize(scale=None, w=width, normalize=True), ToTensor()]
+        ),
+    )
+    patch_splitting(dataset=dataset, output_dst=DST, patch_size=36)
+
+    dataset = RENOIR_Dataset(
+        img_dir=os.path.join(DST, "patches"),
+        transform=transforms.Compose([standardize(), ToTensor()]),
+    )
     dataloader = DataLoader(
         dataset, batch_size=batch_size, shuffle=True, pin_memory=True
     )
-    glr = GLR(width=width, cuda=cuda)
+    glr = GLR(width=36, cuda=cuda)
 
     if args.model:
         print("Continue training from: ", args.model)
@@ -94,6 +108,7 @@ def main(args):
             torch.save(glr.state_dict(), PATH)
 
     print("Total running time: {0:.3f}".format(time.time() - tstart))
+    cleaning(DST)
 
 
 if __name__ == "__main__":
@@ -105,14 +120,17 @@ if __name__ == "__main__":
         help="Path to the trained DeepGLR. Will train from scratch if not specified",
     )
     parser.add_argument(
-        "-o",
-        "--output",
-        help="Output full path (with filename). Default is current working directory",
+        "-n", "--name", help="Name of model. Default is GLR.pkl",
+    )
+    parser.add_argument(
+        "-d",
+        "--destination",
+        help="Output destination. Default is current working directory",
     )
     parser.add_argument(
         "-w",
         "--width",
-        help="Resize image to a square image with given width. Default is 36",
+        help="Resize image to a square image with given width before patch splitting. Default is 324",
     )
     parser.add_argument("-e", "--epoch", help="Total epochs")
     parser.add_argument(
