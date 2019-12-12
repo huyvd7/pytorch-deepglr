@@ -1,3 +1,4 @@
+
 # pytorch-deepglr
 A pytorch implementation of Deep Graph Laplacian Regularization for image denoising. Original work: [Zeng et al.](http://openaccess.thecvf.com/content_CVPRW_2019/papers/NTIRE/Zeng_Deep_Graph_Laplacian_Regularization_for_Robust_Denoising_of_Real_Images_CVPRW_2019_paper.pdf)
 
@@ -15,14 +16,18 @@ A pytorch implementation of Deep Graph Laplacian Regularization for image denois
 We provide two sample scripts to evaluate the trained models. For both DeepGLR and GLR. The GLR is a smaller network and can be tested quickly
 
 ### Evaluate DeepGLR
-Using validate_DGLR.py. The following command will resize the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then perform evaluation for the given trained DeepGLR ```model/deepglr.pretrained``` and write outputs to ```./``` (current directory)
 
     python validate_DGLR.py dataset/test/ -m model/deepglr.pretrained -w 324 -o ./
+    
+The above command resizes the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then performs evaluation for the given trained DeepGLR ```model/deepglr.pretrained``` and saves outputs to ```./``` (current directory)
+
 
 ### Evaluate GLR
-Using validate_GLR.py. This runs much faster but since it's a single GLR layer, it has poor results. The following command will resize the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then perform evaluation for the given trained GLR ```model/glr.pretrained``` and write outputs to ```./``` (current directory)
 
     python validate_GLR.py dataset/test/ -m model/glr.pretrained -w 324 -o ./
+    
+The above command runs much faster but because it's using a single GLR layer, it has poor results. It resizes the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then performs evaluation for the given trained GLR ```model/glr.pretrained``` and saves outputs to ```./``` (current directory)
+
       
 ### NOTE
 The provided sample dataset in this directory is a resized version of RENOIR dataset (resized to 720x720). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html). 
@@ -33,7 +38,7 @@ Because this is a resize version, the evaluation results are different from what
     
     python train_DGLR.py dataset/train/ -n MODEL_NAME -d ./ -w 324 -e 200 -b 100 -l 2e-4 
     
-Using train_DGLR.py. The above command will train a new DeepGLR with these hyperparameters:
+The above command will train a new DeepGLR with these hyperparameters:
 
     Dataset ```dataset/train/```
     Output model name ```MODEL_NAME``` (-n)
@@ -51,7 +56,7 @@ We can also continue train an existing DeepGLR by using ```-m PATH_TO_EXIST_MODE
 
     python train_GLR.py dataset/train/ -n MODEL_NAME -d ./ -w 324 -e 200 -b 100 -l 2e-4 
     
-Using train_GLR.py. Same parameters as DeepGLR
+Same parameters as DeepGLR
 
 ## Remove noise of a single image using a trained DeepGLR
 
