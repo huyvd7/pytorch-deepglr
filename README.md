@@ -41,7 +41,7 @@ The above command runs much faster but because it's using a single GLR layer, it
 
 The provided sample dataset in this directory is a resized version of RENOIR dataset (resized to 720x720). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html).
 
-Because this is a resize version, **the evaluation results are different from what were reported**. To reproduce the same results as written in the report, please replace the sample dataset in this repository with the original one. For your convinient, you can use this [Google Drive mirror](https://drive.google.com/file/d/1gK611CnIC5PmUDLgCp8jVrEygn6VOytf/view?usp=sharing). This mirror will be deleted at the end of Dec 2019.
+Because this is a resize version, **the evaluation results are different from what were reported (much higher!!)**. To reproduce the same results as written in the report, please replace the sample dataset in this repository with the original one. For your convinient, you can use this [Google Drive mirror](https://drive.google.com/file/d/1gK611CnIC5PmUDLgCp8jVrEygn6VOytf/view?usp=sharing). This mirror will be deleted at the end of Dec 2019.
 
 ## Train a model
 ### Train a DeepGLR
