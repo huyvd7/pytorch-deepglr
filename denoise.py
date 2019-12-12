@@ -39,7 +39,7 @@ def main(args):
     glr = DeepGLR(width=36, cuda=cuda)
     device = torch.device("cuda") if cuda else torch.device("cpu")
     glr.load_state_dict(torch.load(args.model, map_location=device))
-
+    dtype = torch.cuda.FloatTensor if cuda else torch.FloatTensor
     psnrs = list()
     if args.ref:
         ref = cv2.imread(args.ref)
@@ -64,7 +64,7 @@ def main(args):
         torch.from_numpy(T1.detach().numpy().transpose(1, 2, 0))
         .unfold(0, 36, 36)
         .unfold(1, 36, 36)
-    )
+    ).type(dtype)
     if args.ref:
         T2r = (
             torch.from_numpy(T1r.detach().numpy().transpose(1, 2, 0))
@@ -77,6 +77,9 @@ def main(args):
     for ii, i in enumerate(range(T2.shape[1])):
         P = glr.predict(T2[i, :, :, :, :].float())
 
+        img1 = T2r[i, :, :, :, :].float()
+        if cuda:
+            P = P.cpu()
         if args.ref:
             img1 = T2r[i, :, :, :, :].float()
             img2 = P

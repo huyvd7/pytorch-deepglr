@@ -492,7 +492,6 @@ def patch_splitting(dataset, output_dst, patch_size=36):
             .reshape(1, 3, -1, patch_size, patch_size)
             .squeeze()
         )
-        print(T1.shape, T2.shape)
         for i in range(T1.shape[1]):
             save_image(
                 T1[:, i, :, :], os.path.join(output_dst_noisy, "{0}_{1}".format(i, nnn))
