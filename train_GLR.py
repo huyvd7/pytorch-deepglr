@@ -27,8 +27,8 @@ def main(args):
     else:
         width = 324
     if width <= 36:
-        print("Too small image, can't denoised. Minimum width is 36")
-        return 1
+        print("Too small image, can't denoised. Minimum width is 72")
+        return 11
 
     if args.learning_rate:
         lr = float(args.learning_rate)
@@ -46,7 +46,7 @@ def main(args):
     if args.name:
         PATH = os.path.join(DST, args.name)
     else:
-        PATH = os.path.join(DST, "GLR.pkl")
+        PATH = os.path.join(DST, "DGLR.pkl")
 
     dataset = RENOIR_Dataset(
         img_dir=args.train_path,
@@ -120,7 +120,7 @@ if __name__ == "__main__":
         help="Path to the trained DeepGLR. Will train from scratch if not specified",
     )
     parser.add_argument(
-        "-n", "--name", help="Name of model. Default is GLR.pkl",
+        "-n", "--name", help="Name of model. Default is DGLR.pkl",
     )
     parser.add_argument(
         "-d",
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-w",
         "--width",
-        help="Resize image to a square image with given width before patch splitting. Default is 324",
+        help="Resize image to a square image with given width before patch splitting. Default is 324. Minimum is 72",
     )
     parser.add_argument("-e", "--epoch", help="Total epochs")
     parser.add_argument(
