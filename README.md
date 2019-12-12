@@ -8,3 +8,6 @@ A pytorch implementation of Deep Graph Laplacian Regularization for image denois
       ``` pip install -r requirements.txt ```
 
 # Basic usage
+## Evaluate a DeepGLR model
+
+## Train DeepGLR from scratch
