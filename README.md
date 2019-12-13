@@ -6,6 +6,21 @@ A pytorch implementation of Deep Graph Laplacian Regularization for image denois
   <img width="817" height="300" src="img/sample2.JPG" class="img-responsive">
 </p>
 
+Table of Contents
+=================
+
+   * [Installation](#installation)
+   * [Basic usage](#basic-usage)
+      * [Evaluate a trained model](#evaluate-a-trained-model)
+         * [Evaluate DeepGLR](#evaluate-deepglr)
+         * [Evaluate GLR](#evaluate-glr)
+         * [NOTE](#note)
+      * [Train a model](#train-a-model)
+         * [Train a DeepGLR](#train-a-deepglr)
+         * [Train a GLR](#train-a-glr)
+      * [Remove noise of a single image using a trained DeepGLR](#remove-noise-of-a-single-image-using-a-trained-deepglr)
+   * [Acknowledgments](#acknowledgments)
+   
 # Installation
 1. Clone this [repository](https://github.com/huyvd7/pytorch-deepglr)
 
