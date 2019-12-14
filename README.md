@@ -49,8 +49,9 @@ Table of Contents
 
 # Basic usage
 
+We provide implementations for both DeepGLR and GLR since DeepGLR is a stacking version of GLRs. GLR is a smaller network and can be test more quickly, but it has poorer performance than DeepGLR.
+
 ## Evaluate a trained model
-Two sample scripts to evaluate the trained models are provided. For both DeepGLR and GLR. The GLR is a smaller network and can be tested quickly.
 
 ### Evaluate DeepGLR
 
@@ -63,7 +64,7 @@ The above command resizes the input images located at ```dataset/test/``` to squ
 
     python validate_GLR.py dataset/test/ -m model/glr.pretrained -w 324 -o ./
     
-The above command runs much faster but it has poorer results because it's using a single GLR layer. It resizes the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then performs evaluation for the given trained GLR ```model/glr.pretrained``` and saves outputs to ```./``` (current directory).
+The above command resizes the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then performs evaluation for the given trained GLR ```model/glr.pretrained``` and saves outputs to ```./``` (current directory).
 
       
 ### NOTE
@@ -100,7 +101,7 @@ The above command will train a new DeepGLR with these hyperparameters:
 
 **Note:** training a DeepGLR from scratch would require a lot of hyperparameter tuning depends on the dataset and also randomization. It is easier to train 4 separate single GLR first, then stack them manually (this is a future work, feel free to make a pull request!).
 
-We can also continue training an existing DeepGLR by using ```-m PATH_TO_EXIST_MODEL```. Thus, to train from ```model/deepglr.pretrained```, we can use:
+If you want to continue training an existing DeepGLR instead of training from scratch, you can add ```-m PATH_TO_EXISTED_MODEL```:
 
     python train_DGLR.py dataset/train/ -m model/deepglr.pretrained -n MODEL_NAME -d ./ -w 324 -e 200 -b 100 -l 2e-4 
 
@@ -113,10 +114,9 @@ Same parameters as DeepGLR.
 
 ## Remove noise of a single image using a trained DeepGLR
 
-    python denoise.py INPUT_IMAGE -m model/deepglr.pretrained -w 324 -o OUTPUT_IMAGE
+    python denoise.py dataset/test/noisy/2_n.bmp -m model/deepglr.pretrained -w 324 -o OUTPUT_IMAGE.PNG
 
-The above command will resize the ```INPUT_IMAGE``` to ```324x324```, then denoise it using a trained DeepGLR ```model/deepglr.pretrained``` and save the result at ```OUTPUT_IMAGE```.
+The above command will resize the ```dataset/test/noisy/2_n.bmp``` to ```324x324```, then denoise it using a trained DeepGLR ```model/deepglr.pretrained``` and save the result at ```OUTPUT_IMAGE.PNG```.
 
 # Acknowledgments
 Most of these works are done on Google Colaboratory. Thanks Google for the free GPUs. 
-
