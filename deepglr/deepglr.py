@@ -443,7 +443,7 @@ def qpsolve(L, u, y, Im):
 
 
 def patch_splitting(dataset, output_dst, patch_size=36):
-    '''Split each image in the dataset to patch size with size patch_size x patch_size'''
+    """Split each image in the dataset to patch size with size patch_size x patch_size"""
     import shutil
 
     output_dst_temp = os.path.join(output_dst, "patches")
@@ -506,7 +506,7 @@ def patch_splitting(dataset, output_dst, patch_size=36):
 
 
 def cleaning(output_dst):
-    '''Clean the directory after running'''
+    """Clean the directory after running"""
     import shutil
 
     output_dst_temp = os.path.join(output_dst, "patches")
