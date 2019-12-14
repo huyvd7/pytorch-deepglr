@@ -45,24 +45,25 @@ Table of Contents
     pip install -r requirements.txt
     ```     
       
-4. If you have issues when installing PyTorch. Please follow their official installation guide [PyTorch](https://pytorch.org/get-started/previous-versions/). Please looking for this version ```pytorch==1.2.0 and torchvision==0.4.0```
+4. If you have issues when installing PyTorch. Please follow their official installation guide [PyTorch](https://pytorch.org/get-started/previous-versions/). Please looking for this version ```pytorch==1.2.0 and torchvision==0.4.0```.
 
 # Basic usage
+
 ## Evaluate a trained model
-Two sample scripts to evaluate the trained models are provided. For both DeepGLR and GLR. The GLR is a smaller network and can be tested quickly
+Two sample scripts to evaluate the trained models are provided. For both DeepGLR and GLR. The GLR is a smaller network and can be tested quickly.
 
 ### Evaluate DeepGLR
 
     python validate_DGLR.py dataset/test/ -m model/deepglr.pretrained -w 324 -o ./
     
-The above command resizes the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then performs evaluation for the given trained DeepGLR ```model/deepglr.pretrained``` and saves outputs to ```./``` (current directory)
+The above command resizes the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then performs evaluation for the given trained DeepGLR ```model/deepglr.pretrained``` and saves outputs to ```./``` (current directory).
 
 
 ### Evaluate GLR
 
     python validate_GLR.py dataset/test/ -m model/glr.pretrained -w 324 -o ./
     
-The above command runs much faster but it has poorer results because it's using a single GLR layer. It resizes the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then performs evaluation for the given trained GLR ```model/glr.pretrained``` and saves outputs to ```./``` (current directory)
+The above command runs much faster but it has poorer results because it's using a single GLR layer. It resizes the input images located at ```dataset/test/``` to square images with size ```324 x 324```, then performs evaluation for the given trained GLR ```model/glr.pretrained``` and saves outputs to ```./``` (current directory).
 
       
 ### NOTE
@@ -71,9 +72,9 @@ The above command runs much faster but it has poorer results because it's using 
   <img width="1000" height="105" src="img/thumbnail.PNG">
 </p>
 
-The provided sample dataset in this directory is a resized version of RENOIR dataset (720x720 instead of 3000x3000). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html).
+The provided sample dataset in this repository is a resized version of RENOIR dataset (720x720 instead of 3000x3000). The original dataset is located at [Adrian Barbu's site](http://adrianbarburesearch.blogspot.com/p/renoir-dataset.html).
 
-Since this is a resized dataset, **the evaluation results are different from what were reported (MUCH HIGHER!!!)**. For this sample dataset, the evaluation scores are:
+Since this is a resized dataset, **the evaluation results of DeepGLR are different from what were reported (MUCH HIGHER!!!)**. For the DeepGLR of this sample dataset, the evaluation scores are:
 
 | Metric        | Train           | Test  |
 | :-------------: |:-------------:| :-----:|
@@ -97,7 +98,7 @@ The above command will train a new DeepGLR with these hyperparameters:
     Batch size: 100 (-b)
     Learning rate: 2e-4 (-l)
 
-**Note:** training a DeepGLR from scratch would require a lot of hyperparameter tuning depends on the dataset and also randomization. It is easier to train 4 separate single GLR first, then stack them manually (this is a future work, feel free to make a pull request!)
+**Note:** training a DeepGLR from scratch would require a lot of hyperparameter tuning depends on the dataset and also randomization. It is easier to train 4 separate single GLR first, then stack them manually (this is a future work, feel free to make a pull request!).
 
 We can also continue training an existing DeepGLR by using ```-m PATH_TO_EXIST_MODEL```. Thus, to train from ```model/deepglr.pretrained```, we can use:
 
@@ -107,14 +108,14 @@ We can also continue training an existing DeepGLR by using ```-m PATH_TO_EXIST_M
 
     python train_GLR.py dataset/train/ -n MODEL_NAME -d ./ -w 324 -e 200 -b 100 -l 2e-4 
     
-Same parameters as DeepGLR/
+Same parameters as DeepGLR.
 
 
 ## Remove noise of a single image using a trained DeepGLR
 
     python denoise.py INPUT_IMAGE -m model/deepglr.pretrained -w 324 -o OUTPUT_IMAGE
 
-The above command will resize the ```INPUT_IMAGE``` to ```324x324```, then denoise it using a trained DeepGLR ```model/deepglr.pretrained``` and save the result at ```OUTPUT_IMAGE```
+The above command will resize the ```INPUT_IMAGE``` to ```324x324```, then denoise it using a trained DeepGLR ```model/deepglr.pretrained``` and save the result at ```OUTPUT_IMAGE```.
 
 # Acknowledgments
 Most of these works are done on Google Colaboratory. Thanks Google for the free GPUs. 
