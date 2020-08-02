@@ -90,7 +90,6 @@ def main(args):
             optimizer.zero_grad()
 
             # forward + backward + optimize
-            print(inputs.shape)
             outputs = glr.predict(inputs)
 
             loss = criterion(outputs, labels)
