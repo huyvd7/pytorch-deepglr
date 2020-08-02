@@ -363,6 +363,7 @@ class GLR(nn.Module):
         E = self.cnnf.forward(xf).squeeze(0)
         Y = self.cnny.forward(xf).squeeze(0)
         u = self.cnnu.forward(xf)
+        print(xf.shape,Y.shape)
         if u.max() > 15.5625:
             u[u > 15.5625] = 15.5625
         img_dim = self.wt
