@@ -384,10 +384,10 @@ class GLR(nn.Module):
         img_dim = self.wt
         identity_matrix = torch.eye(img_dim ** 2, img_dim ** 2).type(self.dtype)
         if xf.shape[0] == 1:
-            print(xf.shape)
             E = E.unsqueeze(0)
             Y = Y.unsqueeze(0)
         E = E.view(E.shape[0], E.shape[1], img_dim ** 2)
+        print(xf.shape, Y.shape)
         Y = Y.view(Y.shape[0], img_dim ** 2, 3)
 
         L = laplacian_construction(width=img_dim, F=E)
