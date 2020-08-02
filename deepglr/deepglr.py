@@ -387,7 +387,6 @@ class GLR(nn.Module):
             E = E.unsqueeze(0)
             Y = Y.unsqueeze(0)
         E = E.view(E.shape[0], E.shape[1], img_dim ** 2)
-        print(Y.shape, img_dim)
         #Y = Y.view(Y.shape[0], img_dim ** 2, 3)
 
         L = laplacian_construction(width=img_dim, F=E)
