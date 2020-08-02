@@ -57,7 +57,7 @@ def main(args):
 
         for ii, i in enumerate(range(T2.shape[1])):
             #P = glr.predict(T2[i, :, :, :, :].float())
-            P = glr.forward(T2[i, :, :, :, :].float())
+            P = glr.forward(T2[i, :, :, :, :].type(dtype))
             img1 = T2r[i, :, :, :, :].float()
             if cuda:
                 P = P.cpu()
