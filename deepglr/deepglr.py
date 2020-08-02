@@ -387,12 +387,11 @@ class GLR(nn.Module):
             E = E.unsqueeze(0)
             Y = Y.unsqueeze(0)
         E = E.view(E.shape[0], E.shape[1], img_dim ** 2)
-        print(xf.shape, Y.shape)
-        Y = Y.view(Y.shape[0], img_dim ** 2, 3)
+        #Y = Y.view(Y.shape[0], img_dim ** 2, 3)
 
         L = laplacian_construction(width=img_dim, F=E)
 
-        out = qpsolve(L=L, u=u, y=Y, Im=identity_matrix)
+        out = qpsolve(L=L, u=u, y=Y.view(Y.shape[0], img_dim ** 2, 3), Im=identity_matrix)
         return out.view(xf.shape[0], 3, img_dim, img_dim)
 
 
