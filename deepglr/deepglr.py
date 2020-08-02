@@ -306,7 +306,15 @@ def laplacian_construction(width, F, ntype="8"):
         def lambda_func(x):
             return get_w(x, F)
 
+
+
         W = list(map(lambda_func, A_pair))
+        #Fs = (
+        #    self.opt.H.matmul(E.view(E.shape[0], E.shape[1], self.opt.width ** 2, 1))
+        #    ** 2  
+        #)
+        #w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
+
         A = torch.zeros(F.shape[0], width ** 2, width ** 2).type(dtype)
         for idx, p in enumerate(A_pair):
             i = p[0]
@@ -376,6 +384,7 @@ class GLR(nn.Module):
         img_dim = self.wt
         identity_matrix = torch.eye(img_dim ** 2, img_dim ** 2).type(self.dtype)
         if xf.shape[0] == 1:
+            print(xf.shape)
             E = E.unsqueeze(0)
             Y = Y.unsqueeze(0)
         E = E.view(E.shape[0], E.shape[1], img_dim ** 2)
@@ -396,15 +405,15 @@ class DeepGLR(nn.Module):
         super(DeepGLR, self).__init__()
         self.glr1 = GLR(cuda=cuda)
         self.glr2 = GLR(cuda=cuda)
-        self.glr3 = GLR(cuda=cuda)
-        self.glr4 = GLR(cuda=cuda)
+        #self.glr3 = GLR(cuda=cuda)
+        #self.glr4 = GLR(cuda=cuda)
         self.cuda = cuda
 
         if self.cuda:
             self.glr1.cuda()
             self.glr2.cuda()
-            self.glr3.cuda()
-            self.glr4.cuda()
+            #self.glr3.cuda()
+            #self.glr4.cuda()
 
     def load(self, PATH1, PATH2, PATH3, PATH4):
         if self.cuda:
@@ -413,23 +422,23 @@ class DeepGLR(nn.Module):
             device = torch.device("cpu")
         self.glr1.load_state_dict(torch.load(PATH1, map_location=device))
         self.glr2.load_state_dict(torch.load(PATH2, map_location=device))
-        self.glr3.load_state_dict(torch.load(PATH3, map_location=device))
-        self.glr4.load_state_dict(torch.load(PATH4, map_location=device))
+        #self.glr3.load_state_dict(torch.load(PATH3, map_location=device))
+        #self.glr4.load_state_dict(torch.load(PATH4, map_location=device))
 
     def predict(self, sample):
         if self.cuda:
             sample.cuda()
         P = self.glr1.predict(sample)
         P = self.glr2.predict(P)
-        P = self.glr3.predict(P)
-        P = self.glr4.predict(P)
+        #P = self.glr3.predict(P)
+        #P = self.glr4.predict(P)
         return P
 
     def forward(self, sample):
         P = self.glr1.forward(sample)
         P = self.glr2.forward(P)
-        P = self.glr3.forward(P)
-        P = self.glr4.forward(P)
+        #P = self.glr3.forward(P)
+        #P = self.glr4.forward(P)
         return P
 
 
