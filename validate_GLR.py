@@ -56,8 +56,8 @@ def main(args):
         s2 = int(T2.shape[-1])
 
         for ii, i in enumerate(range(T2.shape[1])):
+            print(T2[i, :, :, :, :].shape)
             P = glr.predict(T2[i, :, :, :, :].float())
-
             img1 = T2r[i, :, :, :, :].float()
             if cuda:
                 P = P.cpu()
