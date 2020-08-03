@@ -64,8 +64,11 @@ def main(args):
         dataset, batch_size=batch_size, shuffle=True, pin_memory=True
     )
     glr = DeepGLR(width=36, cuda=cuda)
+    if args.stack:
+        print("Stacking single GLR", args.stack)
+        glr.load(args.stack,args.stack,args.stack,args.stack)
 
-    if args.model:
+    elif args.model:
         print("Continue training from: ", args.model)
         device = torch.device("cuda") if cuda else torch.device("cpu")
         try:
@@ -139,6 +142,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-l", "--learning_rate", help="Training learning rate. Default is 2e-4"
+    )
+    parser.add_argument(
+        "--stack", default=None
     )
     args = parser.parse_args()
 
