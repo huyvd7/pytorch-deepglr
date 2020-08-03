@@ -404,15 +404,15 @@ class DeepGLR(nn.Module):
         super(DeepGLR, self).__init__()
         self.glr1 = GLR(cuda=cuda)
         self.glr2 = GLR(cuda=cuda)
-        #self.glr3 = GLR(cuda=cuda)
-        #self.glr4 = GLR(cuda=cuda)
+        self.glr3 = GLR(cuda=cuda)
+        self.glr4 = GLR(cuda=cuda)
         self.cuda = cuda
 
         if self.cuda:
             self.glr1.cuda()
             self.glr2.cuda()
-            #self.glr3.cuda()
-            #self.glr4.cuda()
+            self.glr3.cuda()
+            self.glr4.cuda()
 
     def load(self, PATH1, PATH2, PATH3, PATH4):
         if self.cuda:
