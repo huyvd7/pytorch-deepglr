@@ -104,10 +104,7 @@ def main(args):
                 g = glr.glr1
                 with torch.no_grad():
                     histW = g(inputs, debug=1)
-                if opt.ver: # experimental version
-                    print("\tCNNF stats: ", g.cnnf.layer[0].weight.grad.median())
-                else:
-                    print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean())
+                print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean())
                 print("\tCNNU grads: ", g.cnnu.layer[0].weight.grad.mean())
                 with torch.no_grad():
                     us = g.cnnu(inputs)
@@ -132,10 +129,7 @@ def main(args):
             g = glr.glr1
             with torch.no_grad():
                 histW = g(inputs, debug=1)
-            if opt.ver: # experimental version
-                print("\tCNNF stats: ", g.cnnf.layer[0].weight.grad.median())
-            else:
-                print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean())
+            print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean())
             print("\tCNNU grads: ", g.cnnu.layer[0].weight.grad.mean())
             with torch.no_grad():
                 us = g.cnnu(inputs)
