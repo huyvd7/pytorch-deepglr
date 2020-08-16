@@ -106,6 +106,8 @@ def main(args):
 
             loss = criterion(outputs, labels)
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(gtv1_params, 1e1)
+
             optimizer.step()
 
             running_loss += loss.item()
