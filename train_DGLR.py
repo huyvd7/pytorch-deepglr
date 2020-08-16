@@ -79,11 +79,11 @@ def main(args):
 
     criterion = nn.MSELoss()
     momentum = 0.9
-    gtv1_params = list(filter(lambda kv: 'gtv1' in kv[0] , glr.named_parameters()))
+    gtv1_params = list(filter(lambda kv: 'cnnf' in kv[0] , glr.named_parameters()))
     gtv1_params = [i[1] for i in gtv1_params ]
     gtv2_params = list(filter(lambda kv: 'gtv2' in kv[0], glr.named_parameters()))
     gtv2_params = [i[1] for i in gtv2_params]
-
+    print(len(gtv1_params), len(gtv2_params))
     #optimizer = optim.AdamW(glr.parameters(), lr=lr)
     optimizer = optim.SGD([
                 {'params': gtv2_params, 'lr':lr},
