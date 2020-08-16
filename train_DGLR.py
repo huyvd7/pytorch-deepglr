@@ -100,12 +100,6 @@ def main(args):
             optimizer.step()
 
             running_loss += loss.item()
-        print(
-            time.ctime(),
-            "[{0}] loss: {1:.3f}, time elapsed: {2}".format(
-                epoch + 1, running_loss / (i + 1), time.time() - tstart
-            ),
-        )
             if epoch==0 and (i+1)%80==0:
                 g = glr.glr1
                 with torch.no_grad():
@@ -125,6 +119,13 @@ def main(args):
                 with torch.no_grad():
                     histW = g(inputs, debug=1)
 
+        print(
+            time.ctime(),
+            "[{0}] loss: {1:.3f}, time elapsed: {2}".format(
+                epoch + 1, running_loss / (i + 1), time.time() - tstart
+            ),
+        )
+            
         if (epoch + 1) % 1 == 0:
             print("save @ epoch ", epoch + 1)
             torch.save(glr.state_dict(), PATH)
