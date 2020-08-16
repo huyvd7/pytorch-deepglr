@@ -106,7 +106,7 @@ def main(args):
                 epoch + 1, running_loss / (i + 1), time.time() - tstart
             ),
         )
-        if epoch==0 and (i+1)%80==0:
+            if epoch==0 and (i+1)%80==0:
                 g = glr.glr1
                 with torch.no_grad():
                     histW = g(inputs, debug=1)
@@ -125,9 +125,28 @@ def main(args):
                 with torch.no_grad():
                     histW = g(inputs, debug=1)
 
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % 1 == 0:
             print("save @ epoch ", epoch + 1)
             torch.save(glr.state_dict(), PATH)
+            g = glr.glr1
+            with torch.no_grad():
+                histW = g(inputs, debug=1)
+            if opt.ver: # experimental version
+                print("\tCNNF stats: ", g.cnnf.layer[0].weight.grad.median())
+            else:
+                print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean())
+            print("\tCNNU grads: ", g.cnnu.layer[0].weight.grad.mean())
+            with torch.no_grad():
+                us = g.cnnu(inputs)
+                print("\tCNNU stats: ", us.max().data,  us.mean().data,us.min().data)
+            g = glr.glr2
+            with torch.no_grad():
+                histW = g(inputs, debug=1)
+            g = glr.glr3
+            with torch.no_grad():
+                histW = g(inputs, debug=1)
+
+
 
     torch.save(glr.state_dict(), PATH)
     print("Total running time: {0:.3f}".format(time.time() - tstart))
