@@ -291,7 +291,7 @@ def dist(fi, fj):
     return torch.sum((fi - fj) ** 2, axis=1).type(dtype)
 
 
-def laplacian_construction(width, F, ntype="8"):
+def laplacian_construction(width, F, ntype="8", debug=False):
     """
     Construct Laplacian matrix
     """
@@ -320,6 +320,9 @@ def laplacian_construction(width, F, ntype="8"):
             i = p[0]
             j = p[1]
             A[:, i, j] = W[idx]
+        if debug:
+            print("\t\x1b[31mWEIGHT SUM (1 sample)\x1b[0m", A[0, :, :].sum().data)
+
         D = torch.diag_embed(torch.sum(A, axis=1), offset=0, dim1=-2, dim2=-1).type(
             dtype
         )
@@ -359,7 +362,7 @@ class GLR(nn.Module):
         self.cnny.apply(weights_init_normal)
         self.cnnu.apply(weights_init_normal)
 
-    def forward(self, xf):
+    def forward(self, xf, debug=False):
         E = self.cnnf.forward(xf).squeeze(0)
         Y = self.cnny.forward(xf).squeeze(0)
         u = self.cnnu.forward(xf)
@@ -368,7 +371,7 @@ class GLR(nn.Module):
         img_dim = self.wt
 
         L = laplacian_construction(
-            width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2)
+            width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2), debug=debug
         )
 
         out = qpsolve(
@@ -405,14 +408,14 @@ class DeepGLR(nn.Module):
         self.glr1 = GLR(cuda=cuda)
         self.glr2 = GLR(cuda=cuda)
         self.glr3 = GLR(cuda=cuda)
-        self.glr4 = GLR(cuda=cuda)
+        #self.glr4 = GLR(cuda=cuda)
         self.cuda = cuda
 
         if self.cuda:
             self.glr1.cuda()
             self.glr2.cuda()
             self.glr3.cuda()
-            self.glr4.cuda()
+            #self.glr4.cuda()
 
     def load(self, PATH1, PATH2, PATH3, PATH4):
         if self.cuda:
@@ -422,7 +425,7 @@ class DeepGLR(nn.Module):
         self.glr1.load_state_dict(torch.load(PATH1, map_location=device))
         self.glr2.load_state_dict(torch.load(PATH2, map_location=device))
         self.glr3.load_state_dict(torch.load(PATH3, map_location=device))
-        self.glr4.load_state_dict(torch.load(PATH4, map_location=device))
+        #self.glr4.load_state_dict(torch.load(PATH4, map_location=device))
 
     def predict(self, sample):
         if self.cuda:
@@ -430,13 +433,13 @@ class DeepGLR(nn.Module):
         P = self.glr1.predict(sample)
         P = self.glr2.predict(P)
         P = self.glr3.predict(P)
-        P = self.glr4.predict(P)
+        #P = self.glr4.predict(P)
         return P
 
     def forward(self, sample):
         P = self.glr1.forward(sample)
         P = self.glr2.forward(P)
-        #P = self.glr3.forward(P)
+        P = self.glr3.forward(P)
         #P = self.glr4.forward(P)
         return P
 
