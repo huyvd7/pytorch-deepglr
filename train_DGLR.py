@@ -132,10 +132,10 @@ def main(args):
                 print("\tCNNU stats: ", us.max().data,  us.mean().data,us.min().data)
             g = glr.glr2
             with torch.no_grad():
-                histW = g(inputs, debug=1)
+                histW = g(histW, debug=1)
             g = glr.glr3
             with torch.no_grad():
-                histW = g(inputs, debug=1)
+                histW = g(histW, debug=1)
 
 
 
