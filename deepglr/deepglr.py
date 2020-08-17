@@ -98,6 +98,31 @@ class cnnf(nn.Module):
         return out
 
 
+class cnnf(nn.Module):
+    def __init__(self):
+        super(cnnf_2, self).__init__()
+        self.layer = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            # nn.LeakyReLU(0.05),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            # nn.LeakyReLU(0.05),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            # nn.LeakyReLU(0.05),
+            nn.Conv2d(32, 6, kernel_size=3, stride=1, padding=1),
+        )
+
+    def forward(self, x):
+        # identity = x
+        out = self.layer(x)
+        # out = identity + out
+        return out
+
+
+
+
 class cnny(nn.Module):
     """
     CNN Y of GLR
