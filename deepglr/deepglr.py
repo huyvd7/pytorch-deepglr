@@ -100,7 +100,7 @@ class cnnf(nn.Module):
 
 class cnnf(nn.Module):
     def __init__(self):
-        super(cnnf_2, self).__init__()
+        super(cnnf, self).__init__()
         self.layer = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
