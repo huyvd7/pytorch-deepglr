@@ -23,9 +23,11 @@ class cnnf(nn.Module):
         super(cnnf, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05)
         )
         self.layer2a = nn.Sequential(
             nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1), nn.ReLU()
@@ -53,9 +55,11 @@ class cnnf(nn.Module):
         # CONCAT with output of layer2
         self.layer4 = nn.Sequential(
             nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05)
         )
         # DECONVO
         self.deconvo2 = nn.Sequential(
@@ -67,9 +71,11 @@ class cnnf(nn.Module):
         # CONCAT with output of layer1
         self.layer5 = nn.Sequential(
             nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1),
         )
         self.relu = nn.ReLU()
