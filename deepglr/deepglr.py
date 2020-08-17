@@ -127,26 +127,34 @@ class cnnu(nn.Module):
     """
     CNNU of GLR
     """
-
     def __init__(self):
         super(cnnu, self).__init__()
         self.layer = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
-            nn.ReLU(),
+            # nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
+            nn.Conv2d(opt.channels, 32, kernel_size=3, stride=2, padding=1),
+            # nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            # nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            # nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            # nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
         )
 
         self.fc = nn.Sequential(
-            nn.Linear(3 * 3 * 32, 1 * 1 * 32), nn.Linear(1 * 1 * 32, 1)
+            nn.Linear(3 * 3 * 32, 1 * 1 * 32),
+            nn.Linear(1 * 1 * 32, 1),
+            nn.ReLU()
+            # nn.LeakyReLU(0.05),
         )
+
 
     def forward(self, x):
         out = self.layer(x)
