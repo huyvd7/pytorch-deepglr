@@ -74,9 +74,10 @@ def main(args):
         ds = np.array(dummy).copy()
         new_d = list()
         print(ds.min(), ds.max(), end='-')
-        for d in ds:
-            _d = (d - d.min()) * (1 / (d.max() - d.min()))
-            new_d.append(_d)
+        #for d in ds:
+        #    _d = (d - d.min()) * (1 / (d.max() - d.min()))
+        #    new_d.append(_d)
+        d = np.minimum(np.maximum(ds, 0), 255)
         d = np.array(new_d).transpose(1, 2, 0)
         if args.output:
             opath = os.path.join(args.output, str(imgidx) + ".png")
@@ -84,7 +85,6 @@ def main(args):
         else:
             opath = "./{0}{1}".format(imgidx, ".png")
             opathr = "./{0}{1}".format(imgidx, "_ref.png")
-        d = np.minimum(np.maximum(d, 0), 1)
         print(d.min(), d.max())
         plt.imsave(opath, d)
         d = cv2.imread(opath)
