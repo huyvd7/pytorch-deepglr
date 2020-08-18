@@ -83,6 +83,9 @@ def main(args):
         else:
             opath = "./{0}{1}".format(imgidx, ".png")
             opathr = "./{0}{1}".format(imgidx, "_ref.png")
+        print(d.min(), d.max(), end='-')
+        d = np.minimum(np.maximum(d, 0), 1)
+        print(d.min(), d.max())
         plt.imsave(opath, d)
         d = cv2.imread(opath)
         d = cv2.cvtColor(d, cv2.COLOR_BGR2RGB)
