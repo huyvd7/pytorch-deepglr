@@ -76,15 +76,17 @@ def main(args):
 
     criterion = nn.MSELoss()
     momentum = 0.9
-    gtv1_params = list(filter(lambda kv: 'cnnf' in kv[0] , glr.named_parameters()))
-    gtv1_params = [i[1] for i in gtv1_params ]
-    gtv2_params = list(filter(lambda kv: 'cnny' in kv[0], glr.named_parameters()))
-    gtv2_params = [i[1] for i in gtv2_params]
-    print(len(gtv1_params), len(gtv2_params))
+    cnnf_params = list(filter(lambda kv: 'cnnf' in kv[0] , glr.named_parameters()))
+    cnnf_params = [i[1] for i in cnnf_params]
+    cnny_params = list(filter(lambda kv: 'cnny' in kv[0], glr.named_parameters()))
+    cnny_params = [i[1] for i in cnny_params]
+    cnnu_params = list(filter(lambda kv: 'cnny' in kv[0], glr.named_parameters()))
+    cnnu_params = [i[1] for i in cnnu_params]
+    print(len(cnnf_params), len(cnny_params), len(cnnu_params))
     #optimizer = optim.AdamW(glr.parameters(), lr=lr)
     optimizer = optim.SGD([
-                {'params': gtv2_params, 'lr':lr},
-                 {'params': gtv1_params , 'lr': lr*50}
+                {'params': cnny_params, 'lr':lr},
+                 {'params': cnnf_params , 'lr': lr*50}
              ], lr=lr, momentum=momentum)
 
 
@@ -106,8 +108,9 @@ def main(args):
 
             loss = criterion(outputs, labels)
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(gtv1_params, 1e3)
-            torch.nn.utils.clip_grad_norm_(gtv2_params, 1e2)
+            torch.nn.utils.clip_grad_norm_(cnnf_params, 1e3)
+            torch.nn.utils.clip_grad_norm_(cnny_params, 1e2)
+            torch.nn.utils.clip_grad_norm_(cnnu_params, 1e3)
 
             optimizer.step()
 
