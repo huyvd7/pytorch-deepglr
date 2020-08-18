@@ -73,6 +73,7 @@ def main(args):
         _psnrs.append(np.mean(np.array(psnrs)))
         ds = np.array(dummy).copy()
         new_d = list()
+        print(ds.min(), ds.max(), end='-')
         for d in ds:
             _d = (d - d.min()) * (1 / (d.max() - d.min()))
             new_d.append(_d)
@@ -83,7 +84,6 @@ def main(args):
         else:
             opath = "./{0}{1}".format(imgidx, ".png")
             opathr = "./{0}{1}".format(imgidx, "_ref.png")
-        print(d.min(), d.max(), end='-')
         d = np.minimum(np.maximum(d, 0), 1)
         print(d.min(), d.max())
         plt.imsave(opath, d)
