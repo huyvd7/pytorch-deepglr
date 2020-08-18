@@ -78,7 +78,8 @@ def main(args):
         #    _d = (d - d.min()) * (1 / (d.max() - d.min()))
         #    new_d.append(_d)
         d = np.minimum(np.maximum(ds, 0), 255)
-        d = np.array(new_d).transpose(1, 2, 0)
+        #d = np.array(new_d).transpose(1, 2, 0)
+        d = d.transpose(1, 2, 0)
         if args.output:
             opath = os.path.join(args.output, str(imgidx) + ".png")
             opathr = os.path.join(args.output, str(imgidx) + "_ref.png")
