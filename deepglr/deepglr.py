@@ -98,7 +98,7 @@ class cnnf(nn.Module):
         return out
 
 
-class cnnf(nn.Module):
+class cnnf2(nn.Module):
     def __init__(self):
         super(cnnf, self).__init__()
         self.layer = nn.Sequential(
