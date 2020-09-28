@@ -628,6 +628,7 @@ def qpsolve(L, u, y, Im):
     Solve equation (2) using (6)
     """
     xhat = torch.inverse(Im + u[:, None] * L)
+    print(xhat.shape, y.shape)
     return xhat @ y
 
 
