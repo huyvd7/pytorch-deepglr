@@ -120,10 +120,10 @@ def main(args):
                 print("save @ epoch ", epoch + 1)
                 torch.save(glr.state_dict(), PATH)
                 g = glr
-                print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean().item())
 
                 with torch.no_grad():
                     histW = g(inputs, debug=1)
+                    print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean().item())
                 with torch.no_grad():
                     us = g.cnnu(inputs)
                     print("\tCNNU stats: ", us.max().item(),  us.mean().item(),us.min().item())
@@ -140,9 +140,9 @@ def main(args):
             print("save @ epoch ", epoch + 1)
             torch.save(glr.state_dict(), PATH)
             g = glr
-            print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean().item())
             with torch.no_grad():
                 histW = g(inputs, debug=1)
+                print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean().item())
             with torch.no_grad():
                 us = g.cnnu(inputs)
                 print("\tCNNU stats: ", us.max().item(),  us.mean().item(),us.min().item())
