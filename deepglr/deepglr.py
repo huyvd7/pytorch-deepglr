@@ -360,7 +360,7 @@ def laplacian_construction(width, F, ntype="8", debug=False):
             j = p[1]
             A[:, i, j] = W[idx]
         if debug:
-            print("\t\x1b[31mWEIGHT SUM (1 sample)\x1b[0m", A[0, :, :].sum().data)
+            print("\t\x1b[31mWEIGHT SUM (1 sample)\x1b[0m", A[0, :, :].sum().item())
 
         D = torch.diag_embed(torch.sum(A, axis=1), offset=0, dim1=-2, dim2=-1).type(
             dtype
