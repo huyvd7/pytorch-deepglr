@@ -30,7 +30,7 @@ def main(args):
     dataloader = DataLoader(testset, batch_size=1, shuffle=False)
     cuda = True if torch.cuda.is_available() else False
     dtype = torch.cuda.FloatTensor if cuda else torch.FloatTensor
-    glr = GLR(width=36, cuda=cuda)
+    glr = GLR(width=36, cuda=cuda, opt=opt)
     device = torch.device("cuda") if cuda else torch.device("cpu")
     glr.load_state_dict(torch.load(args.model, map_location=device))
     print("CUDA: {0}, device: {1}".format(cuda, device))
