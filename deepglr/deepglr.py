@@ -523,7 +523,7 @@ class GLR(nn.Module):
 
 
     def forward(self, xf, debug=False):
-        E = self.cnnf.forward(xf).squeeze(0)
+        E = self.cnnf.forward(xf)
         Y = self.cnny.forward(xf).squeeze(0)
         u = self.cnnu.forward(xf)
             #u[u > 15.5625] = 15.5625
@@ -532,9 +532,9 @@ class GLR(nn.Module):
 
         img_dim = self.wt
 
-        L = laplacian_construction(
-            width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2), debug=debug
-        )
+        #L = laplacian_construction(
+        #    width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2), debug=debug
+        #)
         Fs = (
             self.opt.H.matmul(E.view(E.shape[0], E.shape[1], self.opt.width ** 2, 1))
             ** 2
@@ -554,7 +554,7 @@ class GLR(nn.Module):
         
 
         out = qpsolve(
-            L=L, u=u, y=Y.view(Y.shape[0], img_dim ** 2, 3), Im=self.identity_matrix
+            L=L, u=u, y=Y.view(Y.shape[0], self.opt.channels, -1, 1), Im=self.identity_matrix
         )
         return out.view(xf.shape[0], 3, img_dim, img_dim)
 
@@ -568,10 +568,10 @@ class GLR(nn.Module):
         if xf.shape[0] == 1:
             E = E.unsqueeze(0)
             Y = Y.unsqueeze(0)
-        E = E.view(E.shape[0], E.shape[1], img_dim ** 2)
+        #E = E.view(E.shape[0], E.shape[1], img_dim ** 2)
         #Y = Y.view(Y.shape[0], img_dim ** 2, 3)
 
-        L = laplacian_construction(width=img_dim, F=E)
+        #L = laplacian_construction(width=img_dim, F=E)
 
         out = qpsolve(L=L, u=u, y=Y.contiguous().view(Y.shape[0], img_dim ** 2, 3), Im=identity_matrix)
         return out.view(xf.shape[0], 3, img_dim, img_dim)
