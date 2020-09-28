@@ -518,6 +518,7 @@ class GLR(nn.Module):
         self.dtype = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
         self.support_L = torch.ones(self.opt.width**2, 1).type(self.dtype)
+        supporting_matrix(self.opt)
 
 
     def forward(self, xf, debug=False):
