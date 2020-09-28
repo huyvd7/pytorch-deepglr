@@ -80,7 +80,7 @@ def main(args):
     cnnf_params = [i[1] for i in cnnf_params]
     cnny_params = list(filter(lambda kv: 'cnny' in kv[0], glr.named_parameters()))
     cnny_params = [i[1] for i in cnny_params]
-    cnnu_params = list(filter(lambda kv: 'cnny' in kv[0], glr.named_parameters()))
+    cnnu_params = list(filter(lambda kv: 'cnnu' in kv[0], glr.named_parameters()))
     cnnu_params = [i[1] for i in cnnu_params]
     print(len(cnnf_params), len(cnny_params), len(cnnu_params))
     #optimizer = optim.AdamW(glr.parameters(), lr=lr)
