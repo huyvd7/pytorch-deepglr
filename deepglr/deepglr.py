@@ -377,6 +377,120 @@ def weights_init_normal(m):
     if classname.find("Conv") != -1:
         torch.nn.init.normal_(m.weight.data, 0.0, 0.02)
 
+class OPT:
+    def __init__(
+        self,
+        batch_size=100,
+        width=36,
+        connectivity="8",
+        admm_iter=1,
+        prox_iter=1,
+        delta=1,
+        channels=3,
+        eta=0.1,
+        u=1,
+        u_max=100,
+        u_min=10,
+        lr=1e-4,
+        momentum=0.99,
+        ver=None,
+        train="gauss_batch",
+        cuda=False,
+    ):
+        self.batch_size = batch_size
+        self.width = width
+        self.edges = 0
+        self.nodes = width ** 2
+        self.I = None
+        self.pairs = None
+        self.H = None
+        self.connectivity = connectivity
+        self.admm_iter = admm_iter
+        self.prox_iter = prox_iter
+        self.channels = channels
+        self.eta = eta
+        self.u = u
+        self.lr = lr
+        self.delta = delta
+        self.momentum = momentum
+        self.u_max = u_max
+        self.u_min = u_min
+        self.ver = ver
+        self.D = None
+        self.train = train
+        self.pg_zero = None
+        self.cuda= cuda
+        if cuda:
+            self.dtype = torch.cuda.FloatTensor
+        else:
+            self.dtype = torch.FloatTensor
+
+
+    def _print(self):
+        print(
+            "batch_size =",
+            self.batch_size,
+            ", width =",
+            self.width,
+            ", admm_iter =",
+            self.admm_iter,
+            ", prox_iter =",
+            self.prox_iter,
+            ", delta =",
+            self.delta,
+            ", channels =",
+            self.channels,
+            ", eta =",
+            self.eta,
+            ", u_min =",
+            self.u_min,
+            ", u_max =",
+            self.u_max,
+            ", lr =",
+            self.lr,
+            ", momentum =",
+            self.momentum,
+        )
+
+def supporting_matrix(opt):
+    dtype = opt.dtype
+    cuda = opt.cuda
+    width = opt.width
+
+    pixel_indices = [i for i in range(width * width)]
+    pixel_indices = np.reshape(pixel_indices, (width, width))
+    A = connected_adjacency(pixel_indices, connect=opt.connectivity)
+    A_pair = np.asarray(np.where(A.toarray() == 1)).T
+    A_pair = np.unique(np.sort(A_pair, axis=1), axis=0)
+
+    opt.edges = A_pair.shape[0]
+    H_dim0 = opt.edges
+    H_dim1 = width ** 2
+    # unique_A_pair = np.unique(np.sort(A_pair, axis=1), axis=0)
+
+    I = torch.eye(width ** 2, width ** 2).type(dtype)
+    lagrange = torch.zeros(opt.edges, 1).type(dtype)
+    A = torch.zeros(width ** 2, width ** 2).type(dtype)
+    H = torch.zeros(H_dim0, H_dim1).type(dtype)
+    for e, p in enumerate(A_pair):
+        H[e, p[0]] = 1
+        H[e, p[1]] = -1
+        A[p[0], p[1]] = 1
+        # A[p[1], p[0]] = 1
+
+    opt.I = I  # .type(dtype).requires_grad_(True)
+    opt.pairs = A_pair
+    opt.H = H  # .type(dtype).requires_grad_(True)
+    opt.connectivity_full = A.requires_grad_(True)
+    opt.connectivity_idx = torch.where(A > 0)
+
+    for e, p in enumerate(A_pair):
+        A[p[1], p[0]] = 1
+    opt.lagrange = lagrange  # .requires_grad_(True)
+    opt.D = torch.inverse(2 * opt.I + opt.delta * (opt.H.T.mm(H))).type(dtype).detach()
+    opt.pg_zero = torch.zeros(opt.edges, 1).type(dtype)
+    print("OPT created on cuda:", cuda, dtype)
+
 
 class GLR(nn.Module):
     """
@@ -400,6 +514,11 @@ class GLR(nn.Module):
         self.cnnf.apply(weights_init_normal)
         self.cnny.apply(weights_init_normal)
         self.cnnu.apply(weights_init_normal)
+        self.opt = OPT(cuda=cuda)
+        self.dtype = torch.cuda.FloatTensor if cuda else torch.FloatTensor
+
+        self.support_L = torch.ones(self.opt.width**2, 1).type(self.dtype)
+
 
     def forward(self, xf, debug=False):
         E = self.cnnf.forward(xf).squeeze(0)
@@ -412,6 +531,21 @@ class GLR(nn.Module):
         L = laplacian_construction(
             width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2), debug=debug
         )
+        Fs = (
+            self.opt.H.matmul(E.view(E.shape[0], E.shape[1], self.opt.width ** 2, 1))
+            ** 2
+        )
+        w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
+        w = w.unsqueeze(1).repeat(1, self.opt.channels, 1, 1)
+        W[:, :, self.opt.connectivity_idx[0], self.opt.connectivity_idx[1]] = w.view(
+            xf.shape[0], 3, -1
+        )
+        W[:, :, self.opt.connectivity_idx[1], self.opt.connectivity_idx[0]] = w.view(
+            xf.shape[0], 3, -1
+        )
+        L1 = W @ self.support_L
+        L = torch.diag_embed(L1.squeeze(-1)) - W
+        
 
         out = qpsolve(
             L=L, u=u, y=Y.view(Y.shape[0], img_dim ** 2, 3), Im=self.identity_matrix
