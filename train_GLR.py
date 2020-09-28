@@ -86,9 +86,9 @@ def main(args):
     print(len(cnnf_params), len(cnny_params), len(cnnu_params))
     #optimizer = optim.AdamW(glr.parameters(), lr=lr)
     optimizer = optim.SGD([
-                {'params': cnny_params, 'lr':lr/5},
-                {'params': cnnu_params, 'lr':lr*80},
-                 {'params': cnnf_params , 'lr': lr*50}
+                {'params': cnny_params, 'lr':lr/50},
+                {'params': cnnu_params, 'lr':lr*5},
+                 {'params': cnnf_params , 'lr': lr*5}
              ], lr=lr, momentum=momentum)
 
 
