@@ -563,23 +563,8 @@ class GLR(nn.Module):
         return out.view(xf.shape[0], 3, img_dim, img_dim)
 
     def predict(self, xf):
-        E = self.cnnf.forward(xf).squeeze(0)
-        Y = self.cnny.forward(xf).squeeze(0)
-        u = self.cnnu.forward(xf)
-        u[u > 15.5625] = 15.5625
-        img_dim = self.wt
-        identity_matrix = torch.eye(img_dim ** 2, img_dim ** 2).type(self.dtype)
-        if xf.shape[0] == 1:
-            E = E.unsqueeze(0)
-            Y = Y.unsqueeze(0)
-        #E = E.view(E.shape[0], E.shape[1], img_dim ** 2)
-        #Y = Y.view(Y.shape[0], img_dim ** 2, 3)
-
-        #L = laplacian_construction(width=img_dim, F=E)
-
-        out = qpsolve(L=L, u=u, y=Y.contiguous().view(Y.shape[0], img_dim ** 2, 3), Im=identity_matrix)
-        return out.view(xf.shape[0], 3, img_dim, img_dim)
-
+        self.base_W = torch.zeros(xf.shape[0], self.opt.channels, self.opt.width ** 2, self.opt.width ** 2).type(self.dtype)
+        return self.forward(xf)
 
 class DeepGLR(nn.Module):
     """

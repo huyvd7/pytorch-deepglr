@@ -15,6 +15,7 @@ import argparse
 
 
 def main(args):
+    supporting_matrix(opt)
     if args.width:
         width = int(args.width) // 36 * 36
     else:
@@ -106,6 +107,7 @@ def main(args):
     print("Total running time: {0:.3f}".format(time.time() - tstart))
 
 
+opt = OPT(batch_size = 50, admm_iter=4, prox_iter=3, delta=.1, channels=3, eta=.05, u=50, lr=8e-6, momentum=0.9, u_max=65, u_min=50, cuda=True if torch.cuda.is_available() else False)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("testdir", help="Test set directory")
