@@ -542,9 +542,10 @@ class GLR(nn.Module):
         W = self.base_W.clone()
 
         w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
-        w = w.unsqueeze(1).repeat(1, self.opt.channels, 1, 1)
         if debug:
             print("\t\x1b[31mWEIGHT SUM (1 sample)\x1b[0m", w[0, :, :].sum().item())
+
+        w = w.unsqueeze(1).repeat(1, self.opt.channels, 1, 1)
 
         W[:, :, self.opt.connectivity_idx[0], self.opt.connectivity_idx[1]] = w.view(
             xf.shape[0], 3, -1
