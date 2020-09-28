@@ -528,6 +528,8 @@ class GLR(nn.Module):
         u = self.cnnu.forward(xf)
             #u[u > 15.5625] = 15.5625
         u = torch.clamp(u, 0.001, 15.5625)
+        u = u.unsqueeze(1).unsqueeze(1)
+
         img_dim = self.wt
 
         L = laplacian_construction(
