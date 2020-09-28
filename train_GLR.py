@@ -11,6 +11,7 @@ import argparse
 
 
 def main(args):
+    supporting_matrix(opt)
     cuda = True if torch.cuda.is_available() else False
     print("CUDA: ", cuda)
     if cuda:
@@ -63,7 +64,7 @@ def main(args):
     dataloader = DataLoader(
         dataset, batch_size=batch_size, shuffle=True, pin_memory=True
     )
-    glr = GLR(width=36, cuda=cuda)
+    glr = GLR(width=36, cuda=cuda, opt=opt)
 
     if args.model:
         print("Continue training from: ", args.model)
