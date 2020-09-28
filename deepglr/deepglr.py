@@ -562,7 +562,7 @@ class GLR(nn.Module):
         )
         return out.view(xf.shape[0], 3, img_dim, img_dim)
 
-    def predict(self, xf):
+    def predict(self, xf, debug=False):
         self.base_W = torch.zeros(xf.shape[0], self.opt.channels, self.opt.width ** 2, self.opt.width ** 2).type(self.dtype)
         E = self.cnnf.forward(xf)
         Y = self.cnny.forward(xf).squeeze(0).contiguous()
