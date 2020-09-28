@@ -87,7 +87,7 @@ def main(args):
     #optimizer = optim.AdamW(glr.parameters(), lr=lr)
     optimizer = optim.SGD([
                 {'params': cnny_params, 'lr':lr},
-                {'params': cnnu_params, 'lr':lr*40},
+                {'params': cnnu_params, 'lr':lr*100},
                  {'params': cnnf_params , 'lr': lr*50}
              ], lr=lr, momentum=momentum)
 
@@ -118,8 +118,7 @@ def main(args):
 
             running_loss += loss.item()
             if epoch==0 and (i+1)%80==0:
-                print("save @ epoch ", epoch + 1)
-                torch.save(glr.state_dict(), PATH)
+
                 g = glr
 
                 with torch.no_grad():
@@ -141,7 +140,7 @@ def main(args):
         )
         if (epoch + 1) % 1 == 0:
             print("save @ epoch ", epoch + 1)
-            torch.save(glr.state_dict(), PATH)
+            torch.save(glr.state_dict(), PATH+'_{0}'.format(epoch))
             g = glr
             with torch.no_grad():
                 histW = g(inputs, debug=1)
@@ -155,7 +154,7 @@ def main(args):
 
 
 
-    torch.save(glr.state_dict(), PATH)
+    torch.save(glr.state_dict(), PATH+'_{0}'.format(epoch))
     print("Total running time: {0:.3f}".format(time.time() - tstart))
     cleaning(DST)
 
