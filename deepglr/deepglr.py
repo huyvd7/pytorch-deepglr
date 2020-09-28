@@ -519,6 +519,7 @@ class GLR(nn.Module):
 
         self.support_L = torch.ones(self.opt.width**2, 1).type(self.dtype)
         supporting_matrix(self.opt)
+        self.base_W = torch.zeros(self.opt.batch_size, self.opt.channels, self.opt.width ** 2, self.opt.width ** 2).type(self.dtype)
 
 
     def forward(self, xf, debug=False):
@@ -536,6 +537,8 @@ class GLR(nn.Module):
             self.opt.H.matmul(E.view(E.shape[0], E.shape[1], self.opt.width ** 2, 1))
             ** 2
         )
+        W = self.base_W.clone()
+
         w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
         w = w.unsqueeze(1).repeat(1, self.opt.channels, 1, 1)
         W[:, :, self.opt.connectivity_idx[0], self.opt.connectivity_idx[1]] = w.view(
