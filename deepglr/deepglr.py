@@ -355,6 +355,7 @@ def laplacian_construction(width, F, ntype="8", debug=False):
         #w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
 
         A = torch.zeros(F.shape[0], width ** 2, width ** 2).type(dtype)
+        print('WEIGHT SUM: ', W[0,0,:,:].sum().item())
         for idx, p in enumerate(A_pair):
             i = p[0]
             j = p[1]
