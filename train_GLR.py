@@ -86,9 +86,9 @@ def main(args):
     print(len(cnnf_params), len(cnny_params), len(cnnu_params))
     #optimizer = optim.AdamW(glr.parameters(), lr=lr)
     optimizer = optim.SGD([
-                {'params': cnny_params, 'lr':lr/50},
-                {'params': cnnu_params, 'lr':lr*5},
-                 {'params': cnnf_params , 'lr': lr*5}
+                {'params': cnny_params, 'lr':lr/5},
+                {'params': cnnu_params, 'lr':lr*50},
+                 {'params': cnnf_params , 'lr': lr*50}
              ], lr=lr, momentum=momentum)
 
 
@@ -111,9 +111,9 @@ def main(args):
 
             loss = criterion(outputs, labels)
             loss.backward()
-            torch.nn.utils.clip_grad_norm_(cnnf_params, 1e2)
+            torch.nn.utils.clip_grad_norm_(cnnf_params, 1e1)
             torch.nn.utils.clip_grad_norm_(cnny_params, 1e0)
-            torch.nn.utils.clip_grad_norm_(cnnu_params, 1e0)
+            torch.nn.utils.clip_grad_norm_(cnnu_params, 1e1)
 
             optimizer.step()
 
