@@ -497,7 +497,7 @@ class GLR(nn.Module):
     GLR network
     """
 
-    def __init__(self, width=36, cuda=False):
+    def __init__(self, width=36, cuda=False, opt=None):
         super(GLR, self).__init__()
         self.cnnf = cnnf()
         self.cnny = cnny()
@@ -514,7 +514,7 @@ class GLR(nn.Module):
         self.cnnf.apply(weights_init_normal)
         self.cnny.apply(weights_init_normal)
         self.cnnu.apply(weights_init_normal)
-        self.opt = OPT(cuda=cuda)
+        self.opt = opt
         self.dtype = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
         self.support_L = torch.ones(self.opt.width**2, 1).type(self.dtype)
