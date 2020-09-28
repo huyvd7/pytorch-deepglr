@@ -158,6 +158,7 @@ def main(args):
     print("Total running time: {0:.3f}".format(time.time() - tstart))
     cleaning(DST)
 
+opt = OPT(batch_size = 50, admm_iter=4, prox_iter=3, delta=.1, channels=3, eta=.05, u=50, lr=8e-6, momentum=0.9, u_max=65, u_min=50, cuda=True if torch.cuda.is_available() else False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -182,11 +183,11 @@ if __name__ == "__main__":
     )
     parser.add_argument("-e", "--epoch", help="Total epochs")
     parser.add_argument(
-        "-b", "--batch_size", help="Training batch size. Default is 100"
+        "-b", "--batch_size", help="Training batch size. Default is 100",type=int
     )
     parser.add_argument(
         "-l", "--learning_rate", help="Training learning rate. Default is 2e-4"
     )
     args = parser.parse_args()
-
+    opt.batch_size = args.batch_size
     main(args)
