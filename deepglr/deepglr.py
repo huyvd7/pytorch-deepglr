@@ -564,7 +564,45 @@ class GLR(nn.Module):
 
     def predict(self, xf):
         self.base_W = torch.zeros(xf.shape[0], self.opt.channels, self.opt.width ** 2, self.opt.width ** 2).type(self.dtype)
-        return self.forward(xf)
+        E = self.cnnf.forward(xf)
+        Y = self.cnny.forward(xf).squeeze(0).contiguous()
+        u = self.cnnu.forward(xf)
+            #u[u > 15.5625] = 15.5625
+        u = torch.clamp(u, 0.001, 15.5625)
+        u = u.unsqueeze(1).unsqueeze(1)
+
+        img_dim = self.wt
+
+        #L = laplacian_construction(
+        #    width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2), debug=debug
+        #)
+        Fs = (
+            self.opt.H.matmul(E.view(E.shape[0], E.shape[1], self.opt.width ** 2, 1))
+            ** 2
+        )
+        W = self.base_W.clone()
+
+        w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
+        if debug:
+            print("\t\x1b[31mWEIGHT SUM (1 sample)\x1b[0m", w[0, :, :].sum().item())
+
+        w = w.unsqueeze(1).repeat(1, self.opt.channels, 1, 1)
+
+        W[:, :, self.opt.connectivity_idx[0], self.opt.connectivity_idx[1]] = w.view(
+            xf.shape[0], 3, -1
+        )
+        W[:, :, self.opt.connectivity_idx[1], self.opt.connectivity_idx[0]] = w.view(
+            xf.shape[0], 3, -1
+        )
+        L1 = W @ self.support_L
+        L = torch.diag_embed(L1.squeeze(-1)) - W
+        
+
+        out = qpsolve(
+            L=L, u=u, y=Y.view(Y.shape[0], self.opt.channels, -1, 1), Im=self.identity_matrix
+        )
+        return out.view(xf.shape[0], 3, img_dim, img_dim)
+
 
 class DeepGLR(nn.Module):
     """
