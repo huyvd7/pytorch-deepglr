@@ -94,6 +94,7 @@ def main(args):
 
 
     tstart = time.time()
+    ld=len(dataset)
     for epoch in range(total_epoch):  # loop over the dataset multiple times
 
         running_loss = 0.0
@@ -112,7 +113,7 @@ def main(args):
             loss.backward()
             torch.nn.utils.clip_grad_norm_(cnnf_params, 1e2)
             torch.nn.utils.clip_grad_norm_(cnny_params, 1e1)
-            torch.nn.utils.clip_grad_norm_(cnnu_params, 1e2)
+            torch.nn.utils.clip_grad_norm_(cnnu_params, 1e1)
 
             optimizer.step()
 
@@ -135,7 +136,7 @@ def main(args):
         print(
             time.ctime(),
             "[{0}] loss: {1:.3f}, time elapsed: {2}".format(
-                epoch + 1, running_loss / (i + 1), time.time() - tstart
+                epoch + 1, running_loss / (ld*(i + 1)), time.time() - tstart
             ),
         )
         if (epoch + 1) % 1 == 0:
