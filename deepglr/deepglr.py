@@ -628,8 +628,7 @@ def qpsolve(L, u, y, Im):
     Solve equation (2) using (6)
     """
     xhat = torch.inverse(Im + u[:, None] * L)
-    xhat = torch.bmm(xhat, y)
-    return xhat
+    return xhat @ y
 
 
 def patch_splitting(dataset, output_dst, patch_size=36):
