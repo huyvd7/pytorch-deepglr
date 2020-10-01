@@ -101,7 +101,7 @@ else:
 class cnnf(nn.Module):
     def __init__(self):
         super(cnnf, self).__init__()
-        self.layer = nn.Sequential(
+        self.layer1 = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
@@ -113,7 +113,7 @@ class cnnf(nn.Module):
 
     def forward(self, x):
         identity = x
-        out = self.layer(x)
+        out = self.layer1(x)
         out = identity + out
         del identity
         return out
