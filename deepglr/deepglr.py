@@ -519,7 +519,7 @@ class GLR(nn.Module):
 
 
     def forward(self, xf, debug=False):
-        E = self.cnnf.forward(xf
+        E = self.cnnf.forward(xf)
         #Y = self.cnny.forward(xf).squeeze(0)
         Y = xf
         u = self.cnnu.forward(xf)
