@@ -563,7 +563,7 @@ class GLR(nn.Module):
         self.base_W = torch.zeros(xf.shape[0], self.opt.channels, self.opt.width ** 2, self.opt.width ** 2).type(self.dtype)
         E = self.cnnf.forward(xf)
         #Y = self.cnny.forward(xf).squeeze(0)
-        Y = xf
+        Y = xf.contiguous()
         u = self.cnnu.forward(xf)
             #u[u > 15.5625] = 15.5625
         u = torch.clamp(u, 0.001, 15.5625)
