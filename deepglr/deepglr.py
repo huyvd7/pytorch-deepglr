@@ -14,93 +14,93 @@ else:
     dtype = torch.FloatTensor
 
 
-class cnnf(nn.Module):
-    """
-    CNN F of GLR
-    """
+#class cnnf(nn.Module):
+#    """
+#    CNN F of GLR
+#    """
+#
+#    def __init__(self):
+#        super(cnnf, self).__init__()
+#        self.layer1 = nn.Sequential(
+#            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
+#            #nn.ReLU(),
+#            nn.LeakyReLU(0.05),
+#            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+#            #nn.ReLU(),
+#            nn.LeakyReLU(0.05)
+#        )
+#        self.layer2a = nn.Sequential(
+#            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1), nn.ReLU()
+#        )
+#        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
+#        self.layer2 = nn.Sequential(
+#            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1), nn.ReLU()
+#        )
+#
+#        self.layer3a = nn.Sequential(
+#            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1), nn.ReLU()
+#        )
+#        # self.maxpool
+#        self.layer3 = nn.Sequential(
+#            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1), nn.ReLU()
+#        )
+#        # DECONVO
+#
+#        self.deconvo1 = nn.Sequential(
+#            nn.Upsample(scale_factor=2, mode="nearest"),
+#            nn.ReflectionPad2d(1),
+#            nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=0),
+#        )
+#
+#        # CONCAT with output of layer2
+#        self.layer4 = nn.Sequential(
+#            nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
+#            #nn.ReLU(),
+#            nn.LeakyReLU(0.05),
+#            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+#            #nn.ReLU(),
+#            nn.LeakyReLU(0.05)
+#        )
+#        # DECONVO
+#        self.deconvo2 = nn.Sequential(
+#            nn.Upsample(scale_factor=2, mode="nearest"),
+#            nn.ReflectionPad2d(1),
+#            nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=0),
+#        )
+#
+#        # CONCAT with output of layer1
+#        self.layer5 = nn.Sequential(
+#            nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
+#            #nn.ReLU(),
+#            nn.LeakyReLU(0.05),
+#            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+#            #nn.ReLU(),
+#            nn.LeakyReLU(0.05),
+#            nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1),
+#        )
+#        self.relu = nn.ReLU()
+#
+#    def forward(self, x):
+#        outl1 = self.layer1(x)
+#        outl2 = self.layer2a(outl1)
+#        outl2 = self.maxpool(outl2)
+#        outl2 = self.layer2(outl2)
+#        outl3 = self.layer3a(outl2)
+#        outl3 = self.maxpool(outl3)
+#        outl3 = self.layer3(outl3)
+#        outl3 = self.deconvo1(outl3)
+#        outl3 = torch.cat((outl3, outl2), dim=1)
+#        outl4 = self.layer4(outl3)
+#        outl4 = self.deconvo2(outl4)
+#        outl4 = torch.cat((outl4, outl1), dim=1)
+#        del outl1, outl2, outl3
+#        out = self.layer5(outl4)
+#        return out
+#
 
+class cnnf(nn.Module):
     def __init__(self):
         super(cnnf, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
-            #nn.ReLU(),
-            nn.LeakyReLU(0.05),
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            #nn.ReLU(),
-            nn.LeakyReLU(0.05)
-        )
-        self.layer2a = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1), nn.ReLU()
-        )
-        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1), nn.ReLU()
-        )
-
-        self.layer3a = nn.Sequential(
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1), nn.ReLU()
-        )
-        # self.maxpool
-        self.layer3 = nn.Sequential(
-            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1), nn.ReLU()
-        )
-        # DECONVO
-
-        self.deconvo1 = nn.Sequential(
-            nn.Upsample(scale_factor=2, mode="nearest"),
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=0),
-        )
-
-        # CONCAT with output of layer2
-        self.layer4 = nn.Sequential(
-            nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
-            #nn.ReLU(),
-            nn.LeakyReLU(0.05),
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            #nn.ReLU(),
-            nn.LeakyReLU(0.05)
-        )
-        # DECONVO
-        self.deconvo2 = nn.Sequential(
-            nn.Upsample(scale_factor=2, mode="nearest"),
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=0),
-        )
-
-        # CONCAT with output of layer1
-        self.layer5 = nn.Sequential(
-            nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
-            #nn.ReLU(),
-            nn.LeakyReLU(0.05),
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            #nn.ReLU(),
-            nn.LeakyReLU(0.05),
-            nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1),
-        )
-        self.relu = nn.ReLU()
-
-    def forward(self, x):
-        outl1 = self.layer1(x)
-        outl2 = self.layer2a(outl1)
-        outl2 = self.maxpool(outl2)
-        outl2 = self.layer2(outl2)
-        outl3 = self.layer3a(outl2)
-        outl3 = self.maxpool(outl3)
-        outl3 = self.layer3(outl3)
-        outl3 = self.deconvo1(outl3)
-        outl3 = torch.cat((outl3, outl2), dim=1)
-        outl4 = self.layer4(outl3)
-        outl4 = self.deconvo2(outl4)
-        outl4 = torch.cat((outl4, outl1), dim=1)
-        del outl1, outl2, outl3
-        out = self.layer5(outl4)
-        return out
-
-
-class cnnf(nn.Module):
-    def __init__(self):
-        super(cnny, self).__init__()
         self.layer = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
