@@ -98,7 +98,7 @@ class cnnf(nn.Module):
         return out
 
 
-class cnnf2(nn.Module):
+class cnnf(nn.Module):
     def __init__(self):
         super(cnnf, self).__init__()
         self.layer1 = nn.Sequential(
@@ -112,10 +112,10 @@ class cnnf2(nn.Module):
         )
 
     def forward(self, x):
-        identity = x
+        #identity = x
         out = self.layer1(x)
-        out = identity + out
-        del identity
+        #out = identity + out
+        #del identity
         return out
 
 
