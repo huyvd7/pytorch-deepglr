@@ -519,7 +519,7 @@ class GLR(nn.Module):
 
 
     def forward(self, xf, debug=False):
-        E = self.cnnf.forward(xf)
+        E = self.cnnf.forward(xf
         #Y = self.cnny.forward(xf).squeeze(0)
         Y = xf
         u = self.cnnu.forward(xf)
@@ -561,7 +561,7 @@ class GLR(nn.Module):
 
     def predict(self, xf, debug=False):
         self.base_W = torch.zeros(xf.shape[0], self.opt.channels, self.opt.width ** 2, self.opt.width ** 2).type(self.dtype)
-        E = self.cnnf.forward(xf)
+        E = self.cnnf.forward(xf).contiguous()
         #Y = self.cnny.forward(xf).squeeze(0)
         Y = xf.contiguous()
         u = self.cnnu.forward(xf)
