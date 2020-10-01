@@ -62,7 +62,7 @@ def main(args):
         transform=transforms.Compose([standardize(), ToTensor()]),
     )
     dataloader = DataLoader(
-        dataset, batch_size=batch_size, shuffle=True, pin_memory=True
+        dataset, batch_size=batch_size, shuffle=True, pin_memory=True, drop_last=True
     )
     glr = GLR(width=36, cuda=cuda, opt=opt)
 
