@@ -123,9 +123,9 @@ def main(args):
                 g = glr.glr2
                 with torch.no_grad():
                     histW = g(inputs, debug=1)
-                g = glr.glr3
-                with torch.no_grad():
-                    histW = g(inputs, debug=1)
+#                g = glr.glr3
+#                with torch.no_grad():
+#                    histW = g(inputs, debug=1)
 
         print(
             time.ctime(),
@@ -146,9 +146,9 @@ def main(args):
             g = glr.glr2
             with torch.no_grad():
                 histW = g(histW, debug=1)
-            g = glr.glr3
-            with torch.no_grad():
-                histW = g(histW, debug=1)
+#            g = glr.glr3
+#            with torch.no_grad():
+#                histW = g(histW, debug=1)
 
 
 
