@@ -90,6 +90,7 @@ def main(args):
                  {'params': gtv1_params , 'lr': lr*50}
              ], lr=lr, momentum=momentum)
 
+    optimizer = optim.SGD(glr.parameters(), lr=lr, momentum=momentum)
 
     tstart = time.time()
     for epoch in range(total_epoch):  # loop over the dataset multiple times
@@ -108,6 +109,7 @@ def main(args):
 
             loss = criterion(outputs, labels)
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(glr.parameters(), 1e1)
             optimizer.step()
 
             running_loss += loss.item()
