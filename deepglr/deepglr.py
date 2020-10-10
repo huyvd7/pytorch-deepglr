@@ -607,10 +607,10 @@ class DeepGLR(nn.Module):
     Stack 4 GLRs
     """
 
-    def __init__(self, width=36, cuda=False):
+    def __init__(self, width=36, cuda=False, opt=None):
         super(DeepGLR, self).__init__()
-        self.glr1 = GLR(cuda=cuda)
-        self.glr2 = GLR(cuda=cuda)
+        self.glr1 = GLR(cuda=cuda, width=width, opt=opt)
+        self.glr2 = GLR(cuda=cuda, width=width, opt=opt)
         #self.glr3 = GLR(cuda=cuda)
         #self.glr4 = GLR(cuda=cuda)
         self.cuda = cuda

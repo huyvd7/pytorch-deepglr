@@ -63,7 +63,7 @@ def main(args):
     dataloader = DataLoader(
         dataset, batch_size=batch_size, shuffle=True, pin_memory=True
     )
-    glr = DeepGLR(width=36, cuda=cuda)
+    glr = DeepGLR(width=36, cuda=cuda, opt=opt)
     if args.stack:
         print("Stacking single GLR", args.stack)
         glr.load(args.stack,args.stack,args.stack,args.stack)
@@ -157,7 +157,10 @@ def main(args):
     cleaning(DST)
 
 
+opt = OPT(batch_size = 50, admm_iter=4, prox_iter=3, delta=.1, channels=3, eta=.05, u=50, lr=8e-6, momentum=0.9, u_max=65, u_min=50, cuda=True if torch.cuda.is_available() else False)
+
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
     parser.add_argument("train_path", help="Train set directory")
     parser.add_argument(
@@ -190,4 +193,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    opt.batch_size = args.batch_size
     main(args)
