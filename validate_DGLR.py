@@ -29,7 +29,7 @@ def main(args):
     dataloader = DataLoader(testset, batch_size=1, shuffle=False)
     cuda = True if torch.cuda.is_available() else False
     dtype = torch.cuda.FloatTensor if cuda else torch.FloatTensor
-    glr = DeepGLR(width=36, cuda=cuda)
+    glr = DeepGLR(width=36, cuda=cuda, opt=opt)
     device = torch.device("cuda") if cuda else torch.device("cpu")
     glr.load_state_dict(torch.load(args.model, map_location=device))
     print("CUDA: {0}, device: {1}".format(cuda, device))
@@ -98,6 +98,7 @@ def main(args):
     print("Total running time: {0:.3f}".format(time.time() - tstart))
 
 
+opt = OPT(batch_size = 50, admm_iter=4, prox_iter=3, delta=.1, channels=3, eta=.05, u=50, lr=8e-6, momentum=0.9, u_max=65, u_min=50, cuda=True if torch.cuda.is_available() else False)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("testdir", help="Test set directory")
