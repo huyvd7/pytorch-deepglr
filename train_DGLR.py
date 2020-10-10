@@ -179,11 +179,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "-w",
         "--width",
-        help="Resize image to a square image with given width before patch splitting. Default is 324. Minimum is 72",
+        help="Resize image to a square image with given width before patch splitting. Default is 324. Minimum is 72", type=int
     )
     parser.add_argument("-e", "--epoch", help="Total epochs")
     parser.add_argument(
-        "-b", "--batch_size", help="Training batch size. Default is 100"
+        "-b", "--batch_size", help="Training batch size. Default is 100", type=int
     )
     parser.add_argument(
         "-l", "--learning_rate", help="Training learning rate. Default is 2e-4"
