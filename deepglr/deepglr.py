@@ -14,7 +14,7 @@ else:
     dtype = torch.FloatTensor
 
 
-class cnnf(nn.Module):
+class cnnf2(nn.Module):
     """
     CNN F of GLR
     """
@@ -98,25 +98,25 @@ class cnnf(nn.Module):
         return out
 
 
-#class cnnf(nn.Module):
-#    def __init__(self):
-#        super(cnnf, self).__init__()
-#        self.layer1 = nn.Sequential(
-#            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
-#            nn.ReLU(),
-#            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-#            nn.ReLU(),
-#            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-#            nn.ReLU(),
-#            nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1),
-#        )
-#
-#    def forward(self, x):
-#        #identity = x
-#        out = self.layer1(x)
-#        #out = identity + out
-#        #del identity
-#        return out
+class cnnf(nn.Module):
+    def __init__(self):
+        super(cnnf, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1),
+        )
+
+    def forward(self, x):
+        #identity = x
+        out = self.layer1(x)
+        #out = identity + out
+        #del identity
+        return out
 
 
 class cnny(nn.Module):
@@ -520,8 +520,8 @@ class GLR(nn.Module):
 
     def forward(self, xf, debug=False):
         E = self.cnnf.forward(xf)
-        Y = self.cnny.forward(xf).squeeze(0)
-        #Y = xf
+        #Y = self.cnny.forward(xf).squeeze(0)
+        Y = xf
         u = self.cnnu.forward(xf)
             #u[u > 15.5625] = 15.5625
         u = torch.clamp(u, 0.001, 15.5625)
