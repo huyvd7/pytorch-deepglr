@@ -140,7 +140,7 @@ def main(args):
             
         if (epoch + 1) % 1 == 0:
             print("save @ epoch ", epoch + 1)
-            torch.save(glr.state_dict(), PATH)
+            torch.save(glr.state_dict(), PATH+'_{0}'.format(epoch))
             g = glr.glr1
             with torch.no_grad():
                 histW = g(inputs, debug=1)
@@ -156,7 +156,7 @@ def main(args):
 
 
 
-    torch.save(glr.state_dict(), PATH)
+    torch.save(glr.state_dict(), PATH+'_{0}'.format(epoch))
     print("Total running time: {0:.3f}".format(time.time() - tstart))
     cleaning(DST)
 
