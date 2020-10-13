@@ -14,7 +14,7 @@ else:
     dtype = torch.FloatTensor
 
 
-class cnnf(nn.Module):
+class cnnf2(nn.Module):
     """
     CNN F of GLR
     """
@@ -98,7 +98,7 @@ class cnnf(nn.Module):
         return out
 
 
-class cnnf2(nn.Module):
+class cnnf(nn.Module):
     def __init__(self):
         super(cnnf, self).__init__()
         self.layer1 = nn.Sequential(
@@ -517,8 +517,8 @@ class GLR(nn.Module):
 
     def forward(self, xf, debug=False): #glrforward
         E = self.cnnf.forward(xf)
-        Y = self.cnny.forward(xf).squeeze(0)
-        #Y = xf
+        #Y = self.cnny.forward(xf).squeeze(0)
+        Y = xf
         u = self.cnnu.forward(xf)
             #u[u > 15.5625] = 15.5625
         u = torch.clamp(u, 0.001, 15.5625)
