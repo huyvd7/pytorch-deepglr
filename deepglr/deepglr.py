@@ -482,9 +482,6 @@ def supporting_matrix(opt):
 
     for e, p in enumerate(A_pair):
         A[p[1], p[0]] = 1
-    opt.lagrange = lagrange  # .requires_grad_(True)
-    opt.D = torch.inverse(2 * opt.I + opt.delta * (opt.H.T.mm(H))).type(dtype).detach()
-    opt.pg_zero = torch.zeros(opt.edges, 1).type(dtype)
     print("OPT created on cuda:", cuda, dtype)
 
 
