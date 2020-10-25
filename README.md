@@ -17,8 +17,6 @@ Table of Contents
       * [Train a model](#train-a-model)
          * [Train a DeepGLR](#train-a-deepglr)
          * [Train a GLR](#train-a-glr)
-      * [Remove noise of a single image using a trained DeepGLR](#remove-noise-of-a-single-image-using-a-trained-deepglr)
-   * [Acknowledgments](#acknowledgments)
    
 # Installation
 1. Clone this [repository](https://github.com/huyvd7/pytorch-deepglr)
