@@ -11,6 +11,7 @@ import argparse
 
 
 def main(args):
+    supporting_matrix(opt)
     cuda = True if torch.cuda.is_available() else False
     print("CUDA: ", cuda)
     if cuda:
@@ -61,9 +62,9 @@ def main(args):
         transform=transforms.Compose([standardize(), ToTensor()]),
     )
     dataloader = DataLoader(
-        dataset, batch_size=batch_size, shuffle=True, pin_memory=True
+        dataset, batch_size=batch_size, shuffle=True, pin_memory=True, drop_last=True
     )
-    glr = GLR(width=36, cuda=cuda)
+    glr = GLR(width=36, cuda=cuda, opt=opt)
 
     if args.model:
         print("Continue training from: ", args.model)
@@ -75,9 +76,25 @@ def main(args):
             return
 
     criterion = nn.MSELoss()
-    optimizer = optim.AdamW(glr.parameters(), lr=lr)
+    momentum = 0.9
+    cnnf_params = list(filter(lambda kv: 'cnnf' in kv[0] , glr.named_parameters()))
+    cnnf_params = [i[1] for i in cnnf_params]
+    cnny_params = list(filter(lambda kv: 'cnny' in kv[0], glr.named_parameters()))
+    cnny_params = [i[1] for i in cnny_params]
+    cnnu_params = list(filter(lambda kv: 'cnnu' in kv[0], glr.named_parameters()))
+    cnnu_params = [i[1] for i in cnnu_params]
+    print(len(cnnf_params), len(cnny_params), len(cnnu_params))
+    #optimizer = optim.AdamW(glr.parameters(), lr=lr)
+    optimizer = optim.SGD([
+                {'params': cnny_params, 'lr':lr/5},
+                {'params': cnnu_params, 'lr':lr*10},
+                 {'params': cnnf_params , 'lr': lr*50}
+             ], lr=lr, momentum=momentum)
+
+
 
     tstart = time.time()
+    ld=len(dataset)
     for epoch in range(total_epoch):  # loop over the dataset multiple times
 
         running_loss = 0.0
@@ -94,23 +111,55 @@ def main(args):
 
             loss = criterion(outputs, labels)
             loss.backward()
+            torch.nn.utils.clip_grad_norm_(cnnf_params, 1e1)
+            torch.nn.utils.clip_grad_norm_(cnny_params, 1e0)
+            torch.nn.utils.clip_grad_norm_(cnnu_params, 1e0)
+
             optimizer.step()
 
             running_loss += loss.item()
+            if epoch==0 and (i+1)%80==0:
+
+                g = glr
+
+                with torch.no_grad():
+                    histW = g(inputs, debug=1)
+                print("\tCNNU grads: ", g.cnnu.layer[0].weight.grad.mean().item())
+                print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean().item())
+
+                with torch.no_grad():
+                    us = g.cnnu(inputs)
+                    print("\tCNNU stats: ", us.max().item(),  us.mean().item(),us.min().item())
+
+
+
         print(
             time.ctime(),
             "[{0}] loss: {1:.3f}, time elapsed: {2}".format(
-                epoch + 1, running_loss / (i + 1), time.time() - tstart
+                epoch + 1, running_loss / (ld*(i + 1)), time.time() - tstart
             ),
         )
-        if (epoch + 1) % 10 == 0:
+        if (epoch + 1) % 1 == 0:
             print("save @ epoch ", epoch + 1)
-            torch.save(glr.state_dict(), PATH)
+            torch.save(glr.state_dict(), PATH+'_{0}'.format(epoch))
+            g = glr
+            with torch.no_grad():
+                histW = g(inputs, debug=1)
+            print("\tCNNU grads: ", g.cnnu.layer[0].weight.grad.mean().item())
+            print("\tCNNF stats: ", g.cnnf.layer1[0].weight.grad.mean().item())
+            with torch.no_grad():
+                us = g.cnnu(inputs)
+                print("\tCNNU stats: ", us.max().item(),  us.mean().item(),us.min().item())
 
-    torch.save(glr.state_dict(), PATH)
+
+
+
+
+    torch.save(glr.state_dict(), PATH+'_{0}'.format(epoch))
     print("Total running time: {0:.3f}".format(time.time() - tstart))
     cleaning(DST)
 
+opt = OPT(batch_size = 50, admm_iter=4, prox_iter=3, delta=.1, channels=3, eta=.05, u=50, lr=8e-6, momentum=0.9, u_max=65, u_min=50, cuda=True if torch.cuda.is_available() else False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -131,15 +180,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "-w",
         "--width",
-        help="Resize image to a square image with given width before patch splitting. Default is 324. Minimum is 72",
+        help="Resize image to a square image with given width before patch splitting. Default is 324. Minimum is 72", type=int
     )
     parser.add_argument("-e", "--epoch", help="Total epochs")
     parser.add_argument(
-        "-b", "--batch_size", help="Training batch size. Default is 100"
+        "-b", "--batch_size", help="Training batch size. Default is 100",type=int
     )
     parser.add_argument(
         "-l", "--learning_rate", help="Training learning rate. Default is 2e-4"
     )
     args = parser.parse_args()
-
+    opt.batch_size = args.batch_size
     main(args)

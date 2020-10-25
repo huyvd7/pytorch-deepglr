@@ -23,9 +23,11 @@ class cnnf(nn.Module):
         super(cnnf, self).__init__()
         self.layer1 = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05)
         )
         self.layer2a = nn.Sequential(
             nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1), nn.ReLU()
@@ -53,9 +55,11 @@ class cnnf(nn.Module):
         # CONCAT with output of layer2
         self.layer4 = nn.Sequential(
             nn.Conv2d(128, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05)
         )
         # DECONVO
         self.deconvo2 = nn.Sequential(
@@ -67,9 +71,11 @@ class cnnf(nn.Module):
         # CONCAT with output of layer1
         self.layer5 = nn.Sequential(
             nn.Conv2d(64, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            #nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1),
         )
         self.relu = nn.ReLU()
@@ -89,6 +95,27 @@ class cnnf(nn.Module):
         outl4 = torch.cat((outl4, outl1), dim=1)
         del outl1, outl2, outl3
         out = self.layer5(outl4)
+        return out
+
+
+class cnnf2(nn.Module):
+    def __init__(self):
+        super(cnnf, self).__init__()
+        self.layer1 = nn.Sequential(
+            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1),
+        )
+
+    def forward(self, x):
+        #identity = x
+        out = self.layer1(x)
+        #out = identity + out
+        #del identity
         return out
 
 
@@ -121,26 +148,34 @@ class cnnu(nn.Module):
     """
     CNNU of GLR
     """
-
     def __init__(self):
         super(cnnu, self).__init__()
         self.layer = nn.Sequential(
+            # nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
             nn.Conv2d(3, 32, kernel_size=3, stride=2, padding=1),
-            nn.ReLU(),
+            # nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            # nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            # nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            # nn.ReLU(),
+            nn.LeakyReLU(0.05),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
         )
 
         self.fc = nn.Sequential(
-            nn.Linear(3 * 3 * 32, 1 * 1 * 32), nn.Linear(1 * 1 * 32, 1)
+            nn.Linear(3 * 3 * 32, 1 * 1 * 32),
+            nn.Linear(1 * 1 * 32, 1),
+            nn.ReLU()
+            # nn.LeakyReLU(0.05),
         )
+
 
     def forward(self, x):
         out = self.layer(x)
@@ -291,7 +326,7 @@ def dist(fi, fj):
     return torch.sum((fi - fj) ** 2, axis=1).type(dtype)
 
 
-def laplacian_construction(width, F, ntype="8"):
+def laplacian_construction(width, F, ntype="8", debug=False):
     """
     Construct Laplacian matrix
     """
@@ -306,12 +341,23 @@ def laplacian_construction(width, F, ntype="8"):
         def lambda_func(x):
             return get_w(x, F)
 
+
+
         W = list(map(lambda_func, A_pair))
+        #Fs = (
+        #    self.opt.H.matmul(E.view(E.shape[0], E.shape[1], self.opt.width ** 2, 1))
+        #    ** 2  
+        #)
+        #w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
+
         A = torch.zeros(F.shape[0], width ** 2, width ** 2).type(dtype)
         for idx, p in enumerate(A_pair):
             i = p[0]
             j = p[1]
             A[:, i, j] = W[idx]
+        if debug:
+            print("\t\x1b[31mWEIGHT SUM (1 sample)\x1b[0m", A[0, :, :].sum().item())
+
         D = torch.diag_embed(torch.sum(A, axis=1), offset=0, dim1=-2, dim2=-1).type(
             dtype
         )
@@ -327,13 +373,124 @@ def weights_init_normal(m):
     if classname.find("Conv") != -1:
         torch.nn.init.normal_(m.weight.data, 0.0, 0.02)
 
+class OPT:
+    def __init__(
+        self,
+        batch_size=100,
+        width=36,
+        connectivity="8",
+        admm_iter=1,
+        prox_iter=1,
+        delta=1,
+        channels=3,
+        eta=0.1,
+        u=1,
+        u_max=100,
+        u_min=10,
+        lr=1e-4,
+        momentum=0.99,
+        ver=None,
+        train="gauss_batch",
+        cuda=False,
+    ):
+        self.batch_size = batch_size
+        self.width = width
+        self.edges = 0
+        self.nodes = width ** 2
+        self.I = None
+        self.pairs = None
+        self.H = None
+        self.connectivity = connectivity
+        self.admm_iter = admm_iter
+        self.prox_iter = prox_iter
+        self.channels = channels
+        self.eta = eta
+        self.u = u
+        self.lr = lr
+        self.delta = delta
+        self.momentum = momentum
+        self.u_max = u_max
+        self.u_min = u_min
+        self.ver = ver
+        self.D = None
+        self.train = train
+        self.pg_zero = None
+        self.cuda= cuda
+        if cuda:
+            self.dtype = torch.cuda.FloatTensor
+        else:
+            self.dtype = torch.FloatTensor
+
+
+    def _print(self):
+        print(
+            "batch_size =",
+            self.batch_size,
+            ", width =",
+            self.width,
+            ", admm_iter =",
+            self.admm_iter,
+            ", prox_iter =",
+            self.prox_iter,
+            ", delta =",
+            self.delta,
+            ", channels =",
+            self.channels,
+            ", eta =",
+            self.eta,
+            ", u_min =",
+            self.u_min,
+            ", u_max =",
+            self.u_max,
+            ", lr =",
+            self.lr,
+            ", momentum =",
+            self.momentum,
+        )
+
+def supporting_matrix(opt):
+    dtype = opt.dtype
+    cuda = opt.cuda
+    width = opt.width
+
+    pixel_indices = [i for i in range(width * width)]
+    pixel_indices = np.reshape(pixel_indices, (width, width))
+    A = connected_adjacency(pixel_indices, connect=opt.connectivity)
+    A_pair = np.asarray(np.where(A.toarray() == 1)).T
+    A_pair = np.unique(np.sort(A_pair, axis=1), axis=0)
+
+    opt.edges = A_pair.shape[0]
+    H_dim0 = opt.edges
+    H_dim1 = width ** 2
+    # unique_A_pair = np.unique(np.sort(A_pair, axis=1), axis=0)
+
+    I = torch.eye(width ** 2, width ** 2).type(dtype)
+    lagrange = torch.zeros(opt.edges, 1).type(dtype)
+    A = torch.zeros(width ** 2, width ** 2).type(dtype)
+    H = torch.zeros(H_dim0, H_dim1).type(dtype)
+    for e, p in enumerate(A_pair):
+        H[e, p[0]] = 1
+        H[e, p[1]] = -1
+        A[p[0], p[1]] = 1
+        # A[p[1], p[0]] = 1
+
+    opt.I = I  # .type(dtype).requires_grad_(True)
+    opt.pairs = A_pair
+    opt.H = H  # .type(dtype).requires_grad_(True)
+    opt.connectivity_full = A.requires_grad_(True)
+    opt.connectivity_idx = torch.where(A > 0)
+
+    for e, p in enumerate(A_pair):
+        A[p[1], p[0]] = 1
+    print("OPT created on cuda:", cuda, dtype)
+
 
 class GLR(nn.Module):
     """
     GLR network
     """
 
-    def __init__(self, width=36, cuda=False):
+    def __init__(self, width=36, cuda=False, opt=None):
         super(GLR, self).__init__()
         self.cnnf = cnnf()
         self.cnny = cnny()
@@ -350,40 +507,95 @@ class GLR(nn.Module):
         self.cnnf.apply(weights_init_normal)
         self.cnny.apply(weights_init_normal)
         self.cnnu.apply(weights_init_normal)
+        self.opt = opt
+        self.dtype = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
-    def forward(self, xf):
-        E = self.cnnf.forward(xf).squeeze(0)
+        self.support_L = torch.ones(self.opt.width**2, 1).type(self.dtype)
+        supporting_matrix(self.opt)
+        self.base_W = torch.zeros(self.opt.batch_size, self.opt.channels, self.opt.width ** 2, self.opt.width ** 2).type(self.dtype)
+
+
+    def forward(self, xf, debug=False): #glrforward
+        E = self.cnnf.forward(xf)
         Y = self.cnny.forward(xf).squeeze(0)
+        #Y = xf
         u = self.cnnu.forward(xf)
-        if u.max() > 15.5625:
-            u[u > 15.5625] = 15.5625
+            #u[u > 15.5625] = 15.5625
+        u = torch.clamp(u, 0.001, 15.5625)
+        u = u.unsqueeze(1).unsqueeze(1)
+
         img_dim = self.wt
 
-        L = laplacian_construction(
-            width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2)
+        #L = laplacian_construction(
+        #    width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2), debug=debug
+        #)
+        Fs = (
+            self.opt.H.matmul(E.view(E.shape[0], E.shape[1], self.opt.width ** 2, 1))
+            ** 2
         )
+        W = self.base_W.clone()
+
+        w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
+        if debug:
+            print("\t\x1b[31mWEIGHT SUM (1 sample)\x1b[0m", w[0, :, :].sum().item())
+
+        w = w.unsqueeze(1).repeat(1, self.opt.channels, 1, 1)
+
+        W[:, :, self.opt.connectivity_idx[0], self.opt.connectivity_idx[1]] = w.view(
+            xf.shape[0], 3, -1
+        )
+        W[:, :, self.opt.connectivity_idx[1], self.opt.connectivity_idx[0]] = w.view(
+            xf.shape[0], 3, -1
+        )
+        L1 = W @ self.support_L
+        L = torch.diag_embed(L1.squeeze(-1)) - W
+        
 
         out = qpsolve(
-            L=L, u=u, y=Y.view(Y.shape[0], img_dim ** 2, 3), Im=self.identity_matrix
+            L=L, u=u, y=Y.view(Y.shape[0], self.opt.channels, -1, 1), Im=self.identity_matrix
         )
         return out.view(xf.shape[0], 3, img_dim, img_dim)
 
-    def predict(self, xf):
-        E = self.cnnf.forward(xf).squeeze(0)
-        Y = self.cnny.forward(xf).squeeze(0)
+    def predict(self, xf, debug=False):
+        self.base_W = torch.zeros(xf.shape[0], self.opt.channels, self.opt.width ** 2, self.opt.width ** 2).type(self.dtype)
+        E = self.cnnf.forward(xf).contiguous()
+        #Y = self.cnny.forward(xf).squeeze(0)
+        Y = xf.contiguous()
         u = self.cnnu.forward(xf)
-        u[u > 15.5625] = 15.5625
+            #u[u > 15.5625] = 15.5625
+        u = torch.clamp(u, 0.001, 15.5625)
+        u = u.unsqueeze(1).unsqueeze(1)
+
         img_dim = self.wt
-        identity_matrix = torch.eye(img_dim ** 2, img_dim ** 2).type(self.dtype)
-        if xf.shape[0] == 1:
-            E = E.unsqueeze(0)
-            Y = Y.unsqueeze(0)
-        E = E.view(E.shape[0], E.shape[1], img_dim ** 2)
-        Y = Y.view(Y.shape[0], img_dim ** 2, 3)
 
-        L = laplacian_construction(width=img_dim, F=E)
+        #L = laplacian_construction(
+        #    width=img_dim, F=E.view(E.shape[0], E.shape[1], img_dim ** 2), debug=debug
+        #)
+        Fs = (
+            self.opt.H.matmul(E.view(E.shape[0], E.shape[1], self.opt.width ** 2, 1))
+            ** 2
+        )
+        W = self.base_W.clone()
 
-        out = qpsolve(L=L, u=u, y=Y, Im=identity_matrix)
+        w = torch.exp(-(Fs.sum(axis=1)) / (2 * (1 ** 2)))
+        if debug:
+            print("\t\x1b[31mWEIGHT SUM (1 sample)\x1b[0m", w[0, :, :].sum().item())
+
+        w = w.unsqueeze(1).repeat(1, self.opt.channels, 1, 1)
+
+        W[:, :, self.opt.connectivity_idx[0], self.opt.connectivity_idx[1]] = w.view(
+            xf.shape[0], 3, -1
+        )
+        W[:, :, self.opt.connectivity_idx[1], self.opt.connectivity_idx[0]] = w.view(
+            xf.shape[0], 3, -1
+        )
+        L1 = W @ self.support_L
+        L = torch.diag_embed(L1.squeeze(-1)) - W
+        
+
+        out = qpsolve(
+            L=L, u=u, y=Y.view(Y.shape[0], self.opt.channels, -1, 1), Im=self.identity_matrix
+        )
         return out.view(xf.shape[0], 3, img_dim, img_dim)
 
 
@@ -392,19 +604,19 @@ class DeepGLR(nn.Module):
     Stack 4 GLRs
     """
 
-    def __init__(self, width=36, cuda=False):
+    def __init__(self, width=36, cuda=False, opt=None):
         super(DeepGLR, self).__init__()
-        self.glr1 = GLR(cuda=cuda)
-        self.glr2 = GLR(cuda=cuda)
-        self.glr3 = GLR(cuda=cuda)
-        self.glr4 = GLR(cuda=cuda)
+        self.glr1 = GLR(cuda=cuda, width=width, opt=opt)
+        self.glr2 = GLR(cuda=cuda, width=width, opt=opt)
+        #self.glr3 = GLR(cuda=cuda)
+        #self.glr4 = GLR(cuda=cuda)
         self.cuda = cuda
 
         if self.cuda:
             self.glr1.cuda()
             self.glr2.cuda()
-            self.glr3.cuda()
-            self.glr4.cuda()
+        #    self.glr3.cuda()
+        #    self.glr4.cuda()
 
     def load(self, PATH1, PATH2, PATH3, PATH4):
         if self.cuda:
@@ -413,23 +625,23 @@ class DeepGLR(nn.Module):
             device = torch.device("cpu")
         self.glr1.load_state_dict(torch.load(PATH1, map_location=device))
         self.glr2.load_state_dict(torch.load(PATH2, map_location=device))
-        self.glr3.load_state_dict(torch.load(PATH3, map_location=device))
-        self.glr4.load_state_dict(torch.load(PATH4, map_location=device))
+        #self.glr3.load_state_dict(torch.load(PATH3, map_location=device))
+        #self.glr4.load_state_dict(torch.load(PATH4, map_location=device))
 
     def predict(self, sample):
         if self.cuda:
             sample.cuda()
         P = self.glr1.predict(sample)
         P = self.glr2.predict(P)
-        P = self.glr3.predict(P)
-        P = self.glr4.predict(P)
+        #P = self.glr3.predict(P)
+        #P = self.glr4.predict(P)
         return P
 
     def forward(self, sample):
         P = self.glr1.forward(sample)
         P = self.glr2.forward(P)
-        P = self.glr3.forward(P)
-        P = self.glr4.forward(P)
+        #P = self.glr3.forward(P)
+        #P = self.glr4.forward(P)
         return P
 
 
@@ -437,9 +649,8 @@ def qpsolve(L, u, y, Im):
     """
     Solve equation (2) using (6)
     """
-    xhat = torch.inverse(Im + u[:, None] * L)
-    xhat = torch.bmm(xhat, y)
-    return xhat
+    xhat = torch.inverse(Im + u * L)
+    return xhat @ y
 
 
 def patch_splitting(dataset, output_dst, patch_size=36):

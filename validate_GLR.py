@@ -15,6 +15,7 @@ import argparse
 
 
 def main(args):
+    supporting_matrix(opt)
     if args.width:
         width = int(args.width) // 36 * 36
     else:
@@ -29,13 +30,14 @@ def main(args):
     dataloader = DataLoader(testset, batch_size=1, shuffle=False)
     cuda = True if torch.cuda.is_available() else False
     dtype = torch.cuda.FloatTensor if cuda else torch.FloatTensor
-    glr = GLR(width=36, cuda=cuda)
+    glr = GLR(width=36, cuda=cuda, opt=opt)
     device = torch.device("cuda") if cuda else torch.device("cpu")
     glr.load_state_dict(torch.load(args.model, map_location=device))
     print("CUDA: {0}, device: {1}".format(cuda, device))
     psnrs = list()
     _psnrs = list()
     _ssims = list()
+    psnrs_fullimage = list()
     tstart = time.time()
     for imgidx, sample in enumerate(dataloader):
         T1, T1r = sample["nimg"].squeeze(0).float(), sample["rimg"].squeeze(0).float()
@@ -57,7 +59,6 @@ def main(args):
 
         for ii, i in enumerate(range(T2.shape[1])):
             P = glr.predict(T2[i, :, :, :, :].float())
-
             img1 = T2r[i, :, :, :, :].float()
             if cuda:
                 P = P.cpu()
@@ -73,31 +74,40 @@ def main(args):
         _psnrs.append(np.mean(np.array(psnrs)))
         ds = np.array(dummy).copy()
         new_d = list()
-        for d in ds:
-            _d = (d - d.min()) * (1 / (d.max() - d.min()))
-            new_d.append(_d)
-        d = np.array(new_d).transpose(1, 2, 0)
+        print(ds.min(), ds.max(), end='-')
+        #for d in ds:
+        #    _d = (d - d.min()) * (1 / (d.max() - d.min()))
+        #    new_d.append(_d)
+        d = np.minimum(np.maximum(ds, 0), 255)
+        #d = np.array(new_d).transpose(1, 2, 0)
+        d = d.transpose(1, 2, 0)/255
         if args.output:
             opath = os.path.join(args.output, str(imgidx) + ".png")
             opathr = os.path.join(args.output, str(imgidx) + "_ref.png")
         else:
             opath = "./{0}{1}".format(imgidx, ".png")
             opathr = "./{0}{1}".format(imgidx, "_ref.png")
+        print(d.min(), d.max())
         plt.imsave(opath, d)
         d = cv2.imread(opath)
         d = cv2.cvtColor(d, cv2.COLOR_BGR2RGB)
         tref = sample["rimg"].squeeze(0)
         tref = tref.detach().numpy().transpose((1, 2, 0))
         plt.imsave(opathr, tref)
+        _psnr_fullimage = cv2.PSNR(tref,d)
+        psnrs_fullimage.append(_psnr_fullimage)
         (score, diff) = compare_ssim(tref, d, full=True, multichannel=True)
         _ssims.append(score)
         print("SSIM: ", score)
+        print("PSNR (image-based): ", _psnr_fullimage)
         print("Saved ", opath)
-    print("Mean PSNR: {0:.3f}".format(np.mean(_psnrs)))
+    print("Mean PSNR (patch-based): {0:.3f}".format(np.mean(_psnrs)))
+    print("Mean PSNR (image-based): {0:.3f}".format(np.mean(psnrs_fullimage)))
     print("Mean SSIM: {0:.3f}".format(np.mean(_ssims)))
     print("Total running time: {0:.3f}".format(time.time() - tstart))
 
 
+opt = OPT(batch_size = 50, admm_iter=4, prox_iter=3, delta=.1, channels=3, eta=.05, u=50, lr=8e-6, momentum=0.9, u_max=65, u_min=50, cuda=True if torch.cuda.is_available() else False)
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("testdir", help="Test set directory")
