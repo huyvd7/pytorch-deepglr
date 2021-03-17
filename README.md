@@ -64,3 +64,4 @@ Same parameters as DeepGLR.
 
 The above command will resize the ```dataset/test/noisy/2_n.bmp``` to ```324x324```, then denoise it using a trained DeepGLR ```model/deepglr.pretrained``` and save the result at ```OUTPUT_IMAGE.PNG```.
 
+<img src=https://profile-counter.glitch.me/huyvd7/count.svg width=0 /></div>
