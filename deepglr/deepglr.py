@@ -457,7 +457,7 @@ def supporting_matrix(opt):
     pixel_indices = np.reshape(pixel_indices, (width, width))
     A = connected_adjacency(pixel_indices, connect=opt.connectivity)
     A_pair = np.asarray(np.where(A.toarray() == 1)).T
-    A_pair = np.unique(np.sort(A_pair, axis=1), axis=0)
+    #A_pair = np.unique(np.sort(A_pair, axis=1), axis=0)
 
     opt.edges = A_pair.shape[0]
     H_dim0 = opt.edges
